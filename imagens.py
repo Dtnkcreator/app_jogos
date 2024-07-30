@@ -46,4 +46,7 @@ def load_images():
     image15 = Image.open("pubg.jpg").resize((120, 120))
     photo15 = ImageTk.PhotoImage(image15)
 
-    return photo1, photo2, photo3, photo4, photo5, photo6, photo7, photo8, photo9, photo10, photo11, photo12, photo13, photo14, photo15
+    image16 = Image.open("fundo.jpg").resize((500, 500))
+    photo16 = ImageTk.PhotoImage(image16)
+
+    return photo1, photo2, photo3, photo4, photo5, photo6, photo7, photo8, photo9, photo10, photo11, photo12, photo13, photo14, photo15, photo16
