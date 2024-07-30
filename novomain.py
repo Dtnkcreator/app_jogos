@@ -3,7 +3,7 @@ from tkinter import messagebox
 from datetime import datetime
 from imagens import load_images
 from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label
-from model import UsuarioModel
+from model.model import UsuarioModel
 class App:
     def __init__(self, root):
         self.root = root
@@ -264,10 +264,10 @@ class App:
         self.frame_lista_botao = tk.Label(self.frame_favorito, image=self.images[15])
         self.frame_lista_botao.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
 
-        self.listbox_favoritos = tk.Listbox(self.frame_lista, background="#cdcfb7", selectmode=tk.SINGLE)
+        self.listbox_favoritos = tk.Listbox(self.frame_lista_botao, background="#cdcfb7", selectmode=tk.SINGLE)
         self.listbox_favoritos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        self.botao_remover_favorito = tk.Button(self.frame_lista, text="Remover Favorito", command=self.remover_favorito)
+        self.botao_remover_favorito = tk.Button(self.frame_lista_botao, text="Remover Favorito", command=self.remover_favorito)
         self.botao_remover_favorito.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="n")
 
         self.frame_favorito.grid_rowconfigure(1, weight=1)
@@ -301,7 +301,7 @@ class App:
         if self.login_window is None or not self.login_window.winfo_exists():
             self.login_window = tk.Toplevel(self.root)
             self.login_window.title("Login")
-            self.login_window.geometry("290x200")
+            self.login_window.geometry("320x200")
             self.login_window.resizable(False, False)
 
             self.frame_login = tk.Label(self.login_window, image=self.images[15])
@@ -328,12 +328,17 @@ class App:
             label_senha.bind("<Enter>", entrada_do_mouse)
             label_senha.bind("<Leave>", saida_do_mouse)
 
-            entry_senha = tk.Entry(self.frame_login)
-            entry_senha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+            self.entry_senha = tk.Entry(self.frame_login)
+            self.entry_senha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+
+            self.botao_mostra_senha = tk.Button(self.frame_login, image=self.images[17], command=self.esconde_senha)
+            self.botao_mostra_senha.grid(row=2, column=2, padx=5, pady=10, sticky="w")
+
+
 
             def login():
                 usuario = entry_nome.get()
-                senha = entry_senha.get()
+                senha = self.entry_senha.get()
                 if self.usuario_model.validar_usuario(usuario, senha):
                     self.usuario_logado = usuario
                     messagebox.showinfo("Login", f"Bem-vindo, {usuario}!")
@@ -474,6 +479,16 @@ class App:
 
     def desativ_tela_cheia(self, event=None):
         self.root.attributes("-fullscreen", False)
+
+    def esconde_senha(self):
+        if self.entry_senha.cget('show') == '*':
+            self.entry_senha.config(show='')
+            self.botao_mostra_senha.config(image=self.images[17])
+        else:
+            self.entry_senha.config(show='*')
+            self.botao_mostra_senha.config(image=self.images[16], command=self.esconde_senha)
+
+
 
     def fechar_app(self):
         resposta = messagebox.askyesno("Confirmar Saída", "Quer realmente sair?")
