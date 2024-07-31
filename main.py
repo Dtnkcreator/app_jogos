@@ -295,7 +295,7 @@ class App:
     def atualizar_favoritos(self):
         if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
             if hasattr(self, 'listbox_favoritos') and self.listbox_favoritos.winfo_exists():
-                self.listbox_favoritos.delete(0, tk.END)  # Limpa a lista existente
+                self.listbox_favoritos.delete(0, tk.END)
                 favoritos = self.usuario_model.obter_favoritos(self.usuario_logado)
                 for fav in favoritos:
                     self.listbox_favoritos.insert(tk.END, fav)
@@ -348,12 +348,13 @@ class App:
                 senha = self.entry_senha.get()
                 if self.usuario_model.validar_usuario(usuario, senha):
                     self.usuario_logado = usuario
+                    if self.login_window:
+                        self.login_window.destroy()
+                        self.login_window = None
                     messagebox.showinfo("Login", f"Bem-vindo, {usuario}!")
                     self.menu_usuario.delete(0, tk.END)
                     self.menu_usuario.add_command(label=f"Usuário: {usuario}", state=tk.NORMAL)
                     self.menu_usuario.add_command(label="Sair", command=self.sair_usuario)
-                    self.login_window.destroy
-                    self.login_window = None
                 elif usuario == '' or senha == '':
                     messagebox.showwarning("Aviso", "Preencha todos os campos!")
                 else:
@@ -490,11 +491,11 @@ class App:
         self.root.attributes("-fullscreen", False)
 
     def esconde_senha(self):
-        if self.entry_senha.cget('show') == '*':
+        if self.entry_senha.cget('show') == '•':
             self.entry_senha.config(show='')
             self.botao_mostra_senha.config(image=self.images[17])
         else:
-            self.entry_senha.config(show='*')
+            self.entry_senha.config(show='•')
             self.botao_mostra_senha.config(image=self.images[16], command=self.esconde_senha)
 
 
