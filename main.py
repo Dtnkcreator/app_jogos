@@ -62,11 +62,11 @@ class App:
     def submenu_opc_AlterarCor(self):
         cores = {
             'Verde Escuro (Default)': '#607848',
-            'Amarelo': '#87a700',
+            'Amarelo': '#aa9e29',
             'Laranja': '#b25f26',
             'Vermelho': '#6f150b',
-            'Rosa': '#cd60de',
-            'Roxo': '#3d3650',
+            'Rosa': '#f4d2d9',
+            'Roxo': '#6b5197',
             'Azul': '#538bcc',
             'Branco': 'white',
             'Verde Invertido': '#789048'
@@ -79,12 +79,12 @@ class App:
     def Backgrounds(self, cor):
         cores_fundo = {
             "#607848": ('#607848', '#789048', '#789048', '#789048'),
-            "#87a700": ('#87a700', '#afcd09', '#afcd09', '#afcd09'),
+            "#aa9e29": ('#aa9e29', '#d0c152', '#d0c152', '#d0c152'),
             "#538bcc": ('#538bcc', '#88bce6', '#88bce6', '#88bce6'),
             "#b25f26": ('#b25f26', '#c5773d', '#c5773d', '#c5773d'),
             "white": ('white', '#deede0', '#deede0', '#deede0'),
-            "#3d3650": ('#3d3650', '#2e2740', '#2e2740', '#2e2740'),
-            "#cd60de": ('#cd60de', '#c11dc9', '#c11dc9', '#c11dc9'),
+            "#6b5197": ('#6b5197', '#8f73bc', '#8f73bc', '#8f73bc'),
+            "#f4d2d9": ('#f4d2d9', '#e9a5b2', '#e9a5b2', '#e9a5b2'),
             "#6f150b": ('#6f150b', '#801c0f', '#801c0f', '#801c0f'),
             "#789048": ('#789048', '#607848', '#607848', '#607848')
         }
@@ -99,12 +99,13 @@ class App:
 
     def create_widgets(self):
 
-        frame = tk.Frame(self.root, padx=10, pady=10)
-        frame.pack(fill=tk.BOTH, expand=True)
+        self.frame = tk.Frame(self.root, padx=10, pady=10)
+        self.frame.pack(fill=tk.BOTH, expand=True)
 
-        self.canvas = tk.Canvas(frame, background="#607848")
-        self.scroll_x = tk.Scrollbar(frame, orient="horizontal", command=self.canvas.xview)
-        self.scroll_y = tk.Scrollbar(frame, orient="vertical", command=self.canvas.yview)
+        self.canvas = tk.Canvas(self.frame, background="#607848")
+        self.scroll_x = tk.Scrollbar(self.frame, orient="horizontal", command=self.canvas.xview)
+        self.scroll_y = tk.Scrollbar(self.frame, orient="vertical", command=self.canvas.yview)
+        
 
         self.canvas.configure(xscrollcommand=self.scroll_x.set, yscrollcommand=self.scroll_y.set)
 
@@ -120,8 +121,8 @@ class App:
         self.create_header()
         self.create_game_sections()
 
-        frame.grid_rowconfigure(0, weight=1)
-        frame.grid_columnconfigure(0, weight=1)
+        self.frame.grid_rowconfigure(0, weight=1)
+        self.frame.grid_columnconfigure(0, weight=1)
 
     def create_header(self):
         self.label_titulo1 = cria_label_titulo(self.frame_principal, "Aplicativo de Jogos", 0, 0, 5)
@@ -493,11 +494,22 @@ class App:
             self.login_window = None
             
     def tela_cheia(self, event=None):
-        self.root.attributes("-fullscreen", True)
+        self.root.geometry("720x850")
+        # Esconde as barras de rolagem em tela cheia
+        self.scroll_x.grid_forget()
+        self.scroll_y.grid_forget()
 
     def desativ_tela_cheia(self, event=None):
-        self.root.attributes("-fullscreen", False)
+        self.root.geometry("700x700")
+        self.scroll_x = tk.Scrollbar(self.frame, orient="horizontal", command=self.canvas.xview)
+        self.scroll_y = tk.Scrollbar(self.frame, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(xscrollcommand=self.scroll_x.set, yscrollcommand=self.scroll_y.set)
+        self.scroll_x.grid(row=1, column=0, sticky="ew")
+        self.scroll_y.grid(row=0, column=1, sticky="ns")
 
+
+
+        
     def esconde_senha(self):
         if self.entry_senha.cget('show') == '•':
             self.entry_senha.config(show='')
