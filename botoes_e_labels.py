@@ -23,7 +23,7 @@ def cria_label_subtitulo(parent, text, row, column, padx, pady):
 
 def cria_label(parent, text, row, column, padx, pady,sticky):
     # Define a cor de fundo igual ao botão de download
-    label_subtitulo = tk.Label(parent, text=text, compound="top", background="#cdcfb7", font=("Arial Black", 9))
+    label_subtitulo = tk.Label(parent, text=text, compound="top", background="#cdcfb7", font=("Arial Black", 8))
     label_subtitulo.grid(row=row, column=column, padx=padx, pady=pady, columnspan=5, sticky=sticky)
     label_subtitulo.bind("<Enter>", entrada_do_mouse)
     label_subtitulo.bind("<Leave>", saida_do_mouse)

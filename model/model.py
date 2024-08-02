@@ -23,7 +23,8 @@ class UsuarioModel:
             CREATE TABLE IF NOT EXISTS usuario (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 nome VARCHAR(100) UNIQUE,
-                senha VARCHAR(100)
+                senha VARCHAR(100),
+                data_de_nascimento DATE
             )
         ''')
         cursor.execute('''
@@ -37,12 +38,12 @@ class UsuarioModel:
         ''')
         self.conn.commit()
 
-    def criar_usuario(self, nome, senha):
+    def criar_usuario(self, nome, senha, data_de_nascimento):
         try:
             cursor = self.conn.cursor()
             cursor.execute(
-                'INSERT INTO usuario (nome, senha) VALUES (%s, %s)', 
-                (nome, senha)
+                'INSERT INTO usuario (nome, senha, data_de_nascimento) VALUES (%s, %s, %s)', 
+                (nome, senha, data_de_nascimento)
             )
             self.conn.commit()
             cursor.close()
@@ -60,6 +61,14 @@ class UsuarioModel:
             stored_password = user[0]
             return senha == stored_password
         return False
+    
+    def obter_data_nascimento(self, nome):
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT data_de_nascimento FROM usuario WHERE nome = %s', (nome,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result[0] if result else None
+
 
     def adicionar_favorito(self, usuario_nome, jogo_nome):
         try:
@@ -122,12 +131,12 @@ class UsuarioModel:
             
             # Obter o ID do usuário
             cursor.execute('SELECT id FROM usuario WHERE nome = %s', (usuario_nome,))
-            user = cursor.fetchone()
-            if not user:
+            resultado = cursor.fetchone()
+            if not resultado:
                 cursor.close()
                 return False
 
-            id_usuario = user[0]
+            id_usuario = resultado[0]
 
             # Remover o jogo dos favoritos
             cursor.execute(

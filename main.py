@@ -295,7 +295,7 @@ class App:
     def atualizar_favoritos(self):
         if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
             if hasattr(self, 'listbox_favoritos') and self.listbox_favoritos.winfo_exists():
-                self.listbox_favoritos.delete(0, tk.END)  # Limpa a lista existente
+                self.listbox_favoritos.delete(0, tk.END)
                 favoritos = self.usuario_model.obter_favoritos(self.usuario_logado)
                 for fav in favoritos:
                     self.listbox_favoritos.insert(tk.END, fav)
@@ -335,10 +335,10 @@ class App:
             label_senha.bind("<Enter>", entrada_do_mouse)
             label_senha.bind("<Leave>", saida_do_mouse)
 
-            self.entry_senha = tk.Entry(self.frame_login)
+            self.entry_senha = tk.Entry(self.frame_login, show="•")
             self.entry_senha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
 
-            self.botao_mostra_senha = tk.Button(self.frame_login, image=self.images[17], command=self.esconde_senha)
+            self.botao_mostra_senha = tk.Button(self.frame_login, image=self.images[16], command=self.esconde_senha)
             self.botao_mostra_senha.grid(row=2, column=2, padx=5, pady=10, sticky="w")
 
 
@@ -346,14 +346,17 @@ class App:
             def login():
                 usuario = entry_nome.get()
                 senha = self.entry_senha.get()
+                data_de_nascimento = self.usuario_model.obter_data_nascimento(usuario)
                 if self.usuario_model.validar_usuario(usuario, senha):
                     self.usuario_logado = usuario
+                    if self.login_window:
+                        self.login_window.destroy()
+                        self.login_window = None
                     messagebox.showinfo("Login", f"Bem-vindo, {usuario}!")
                     self.menu_usuario.delete(0, tk.END)
-                    self.menu_usuario.add_command(label=f"Usuário: {usuario}", state=tk.NORMAL)
+                    self.menu_usuario.add_command(label=f"Usuário: {usuario}", state=tk.DISABLED)
+                    self.menu_usuario.add_command(label=f"Data de Nascimento: {data_de_nascimento}", state=tk.DISABLED)
                     self.menu_usuario.add_command(label="Sair", command=self.sair_usuario)
-                    self.login_window.destroy
-                    self.login_window = None
                 elif usuario == '' or senha == '':
                     messagebox.showwarning("Aviso", "Preencha todos os campos!")
                 else:
@@ -378,13 +381,13 @@ class App:
         if not self.cadastro_window or not tk.Toplevel.winfo_exists(self.cadastro_window):
             self.cadastro_window = tk.Toplevel(self.root)
             self.cadastro_window.title("Cadastro")
-            self.cadastro_window.geometry("300x180")
+            self.cadastro_window.geometry("300x200")  # Ajustado para acomodar o novo layout
             self.cadastro_window.resizable(False, False)
 
-            frame_cadastro = tk.Label(self.cadastro_window, image=self.images[15])
+            frame_cadastro = tk.Label(self.cadastro_window, image=self.images[15])  # Alterado de Label para Frame para melhor controle
             frame_cadastro.pack(fill='both', expand=True)
 
-            for i in range(4):
+            for i in range(5):  # Ajustado para suportar uma linha extra
                 frame_cadastro.grid_rowconfigure(i, weight=0)
 
             for i in range(2):
@@ -401,7 +404,11 @@ class App:
             self.entrada_senha_cadastro = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
             self.entrada_senha_cadastro.grid(row=2, column=1, padx=5, pady=5, sticky="e")
 
-            button_cadastro = criar_button(frame_cadastro, "Cadastrar", 3, 0, self.cadastrar_usuario)
+            label_aniversario = cria_label(frame_cadastro, "Sua data de nascimento:", 3, 0, 10, 5, "w")
+            self.entrada_aniversario = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
+            self.entrada_aniversario.grid(row=3, column=1, padx=5, pady=5, sticky="e")
+
+            button_cadastro = criar_button(frame_cadastro, "Cadastrar", 4, 0, self.cadastrar_usuario)
 
         else:
             self.cadastro_window.lift()
@@ -409,17 +416,19 @@ class App:
         self.cadastro_window.protocol("WM_DELETE_WINDOW", self.cadastro_window.destroy)
 
 
+
     def cadastrar_usuario(self):
         usuario = self.entrada_usuario_cadastro.get()
         senha = self.entrada_senha_cadastro.get()
+        data_de_nascimento = self.entrada_aniversario.get()
 
-        if not usuario or not senha:
+        if not usuario or not senha or not data_de_nascimento:
             messagebox.showwarning("Erro", "Os campos não foram preenchidos corretamente.")
             return
 
-        if self.usuario_model.criar_usuario(usuario, senha):
+        if self.usuario_model.criar_usuario(usuario, senha,data_de_nascimento):
             messagebox.showinfo("Cadastro", "Cadastro realizado com sucesso!")
-            self.fechar_janela_cadastro()
+            self.cadastro_window.destroy
         else:
             messagebox.showerror("Erro", "Não foi possível realizar o cadastro. Usuário pode já existir.")
 
@@ -490,11 +499,11 @@ class App:
         self.root.attributes("-fullscreen", False)
 
     def esconde_senha(self):
-        if self.entry_senha.cget('show') == '*':
+        if self.entry_senha.cget('show') == '•':
             self.entry_senha.config(show='')
             self.botao_mostra_senha.config(image=self.images[17])
         else:
-            self.entry_senha.config(show='*')
+            self.entry_senha.config(show='•')
             self.botao_mostra_senha.config(image=self.images[16], command=self.esconde_senha)
 
 
