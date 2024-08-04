@@ -1,8 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from datetime import datetime
 from imagens.imagens import load_images
-from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label
+from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio
 from model.model import UsuarioModel
 class App:
     def __init__(self, root):
@@ -128,8 +128,8 @@ class App:
         self.label_titulo1 = cria_label_titulo(self.frame_principal, "Aplicativo de Jogos", 0, 0, 5)
         self.time_label = tk.Label(self.frame_principal, font=("Arial", 10), background="#cdcfb7")
         self.time_label.grid(row=0, column=4, padx=10, pady=10, sticky="e")
-        self.time_label.bind("<Enter>", entrada_do_mouse)
-        self.time_label.bind("<Leave>", saida_do_mouse)
+        self.time_label.bind("<Enter>", lambda e: entrada_do_mouse(e, self.time_label))
+        self.time_label.bind("<Leave>", lambda e: saida_do_mouse(e, self.time_label))
         self.update_time()
 
     def update_time(self):
@@ -237,8 +237,8 @@ class App:
     def criar_button_favoritos(self,parent_frame, jogo, row, column):
         button = tk.Button(parent_frame, text="Favoritar",font=("Arial",9), background="#cdcfb7", command=lambda: self.adicionar_favorito(jogo))
         button.grid(row=row, column=column, padx=5, pady=5)
-        button.bind("<Enter>", entrada_do_mouse)
-        button.bind("<Leave>", saida_do_mouse)
+        button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
+        button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
     
     def adicionar_favorito(self, jogo):
         if not self.usuario_logado:
@@ -318,14 +318,14 @@ class App:
             login_titulo = tk.Label(self.frame_login, text="Login", font=("Arial Black", 12), background="#cdcfb7")
             login_titulo.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 20), sticky="n")
 
-            login_titulo.bind("<Enter>", entrada_do_mouse)
-            login_titulo.bind("<Leave>", saida_do_mouse)
+            login_titulo.bind("<Enter>", lambda e: entrada_do_mouse(e, login_titulo))
+            login_titulo.bind("<Leave>", lambda e: saida_do_mouse(e, login_titulo))
 
             label_nome = tk.Label(self.frame_login, text="Nome de Usuário:", font=("Arial Black", 8), background="#cdcfb7")
             label_nome.grid(row=1, column=0, padx=10, pady=10, sticky="e")
 
-            label_nome.bind("<Enter>", entrada_do_mouse)
-            label_nome.bind("<Leave>", saida_do_mouse)
+            label_nome.bind("<Enter>", lambda e: entrada_do_mouse(e, label_nome))
+            label_nome.bind("<Leave>", lambda e: saida_do_mouse(e, label_nome))
 
             entry_nome = tk.Entry(self.frame_login)
             entry_nome.grid(row=1, column=1, padx=10, pady=10, sticky="w")
@@ -333,8 +333,8 @@ class App:
             label_senha = tk.Label(self.frame_login, text="Senha:", font=("Arial Black", 8), background="#cdcfb7")
             label_senha.grid(row=2, column=0, padx=10, pady=10, sticky="e")
 
-            label_senha.bind("<Enter>", entrada_do_mouse)
-            label_senha.bind("<Leave>", saida_do_mouse)
+            label_senha.bind("<Enter>", lambda e: entrada_do_mouse(e, label_senha))
+            label_senha.bind("<Leave>", lambda e: saida_do_mouse(e, label_senha))
 
             self.entry_senha = tk.Entry(self.frame_login, show="•")
             self.entry_senha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
@@ -454,8 +454,8 @@ class App:
 
             button = tk.Button(parent_frame, text="Baixar", background="#cdcfb7",font=("Arial", 9), command=lambda: self.iniciar_download(button))
             button.grid(row=row, column=column, padx=padx, pady=pady)
-            button.bind("<Enter>", entrada_do_mouse)
-            button.bind("<Leave>", saida_do_mouse)
+            button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
+            button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
             return button
 
     def iniciar_download(self, button):
@@ -526,8 +526,48 @@ class App:
             self.usuario_model.fechar_conexao()
             self.root.destroy()
 
+class TelaInicial:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Tela Inicial")
+        self.root.geometry("700x700")
+        self.root.resizable(False, False)
+        self.images = load_images()
+
+        self.frame_inicio = tk.Frame(self.root, bg="#000042")
+        self.frame_inicio.pack(fill=tk.BOTH, expand=True)
+
+        self.canvas_inicio = tk.Label(self.frame_inicio, image=self.images[18])
+        self.canvas_inicio.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+        self.canvas_inicio.grid_rowconfigure(0, weight=1)
+        self.canvas_inicio.grid_rowconfigure(1, weight=1)
+        self.canvas_inicio.grid_rowconfigure(2, weight=1)
+        self.canvas_inicio.grid_rowconfigure(3, weight=1)
+        self.canvas_inicio.grid_columnconfigure(0, weight=1)
+
+        # Adicionando widgets ao frame usando grid
+        self.label_inicio = tk.Label(self.canvas_inicio, text="Bem-vindo ao Aplicativo de Jogos!",background="#000042",foreground="white",font=("Arial Black",20))
+        self.label_inicio.grid(row=0, column=0, pady=20, padx=10)
+        self.label_inicio2 = tk.Label(self.canvas_inicio, text="Aperte iniciar para ir para a tela principal!",background="#000042",foreground="white", font=("Arial Black",15))
+        self.label_inicio2.grid(row=1, column=0, pady=20, padx=10)
+        self.button_start = tk.Button(self.canvas_inicio, text="Iniciar",background="#000042",foreground="white", font=("Arial Black",20), command=self.abrir_app)
+        self.button_start.grid(row=2, column=0, pady=10)
+
+        self.label_inicio.bind("<Enter>", lambda e: entrada_do_mouse_inicio(e, self.label_inicio))
+        self.label_inicio.bind("<Leave>", lambda e: saida_do_mouse_inicio(e, self.label_inicio))
+        self.label_inicio2.bind("<Enter>", lambda e: entrada_do_mouse_inicio(e, self.label_inicio2))
+        self.label_inicio2.bind("<Leave>", lambda e: saida_do_mouse_inicio(e, self.label_inicio2))
+        self.button_start.bind("<Enter>", lambda e: entrada_do_mouse_inicio(e, self.button_start))
+        self.button_start.bind("<Leave>", lambda e: saida_do_mouse_inicio(e, self.button_start))
+
+    def abrir_app(self):
+        self.root.destroy()
+        root = tk.Tk()
+        app = App(root)
+        root.mainloop()
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = App(root)
+    app = TelaInicial(root)
     root.mainloop()
