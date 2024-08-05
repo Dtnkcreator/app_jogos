@@ -1,6 +1,6 @@
 import mysql.connector
 from datetime import datetime
-from elementos_tkinter import Mensagens
+from view.elementos_tkinter import Mensagens
 
 class SalvarUsuario:
     def __init__(self, nome_usuario: str, data_usuario: datetime, senha_usuario: str):

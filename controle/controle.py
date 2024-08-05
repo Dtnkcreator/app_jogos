@@ -1,5 +1,5 @@
 import tkinter as tk
-from elementos_tkinter import Buttoncustomizado, Labelcustomizada, LabelcustomizadaTitulo, Mensagens, Textcustomizado
+from view.elementos_tkinter import Buttoncustomizado, Labelcustomizada, LabelcustomizadaTitulo, Mensagens, Textcustomizado
 from view.sistema_login import Registro, BaseCadastro, Login
 from model.modelo import SalvarUsuario, CarregarUsuario
 from datetime import datetime
