@@ -23,6 +23,7 @@ def cria_label(parent, text, row, column, padx, pady,sticky):
     label_subtitulo.grid(row=row, column=column, padx=padx, pady=pady, columnspan=5, sticky=sticky)
     label_subtitulo.bind("<Enter>", lambda e: entrada_do_mouse(e, label_subtitulo))
     label_subtitulo.bind("<Leave>", lambda e: saida_do_mouse(e, label_subtitulo))
+    
 def cria_label_titulo(parent, text, row, column, columnspan):
     label_titulo = tk.Label(parent, text=text, font=("Arial Black", 16), background="#cdcfb7")
     label_titulo.grid(row=row, column=column, columnspan=columnspan, pady=(10, 5), sticky="n")
