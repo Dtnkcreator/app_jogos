@@ -311,23 +311,7 @@ class App:
 
     def abrir_janela_cadastro(self):
         self.controle.abrir_janela_registro()
-
-
-
-    def cadastrar_usuario(self):
-        usuario = self.entrada_usuario_cadastro.get()
-        senha = self.entrada_senha_cadastro.get()
-        data_de_nascimento = self.entrada_aniversario.get()
-
-        if not usuario or not senha or not data_de_nascimento:
-            messagebox.showwarning("Erro", "Os campos não foram preenchidos corretamente.")
-            return
-
-        if self.usuario_model.criar_usuario(usuario, senha,data_de_nascimento):
-            messagebox.showinfo("Cadastro", "Cadastro realizado com sucesso!")
-            self.cadastro_window.destroy
-        else:
-            messagebox.showerror("Erro", "Não foi possível realizar o cadastro. Usuário pode já existir.")
+        
 
     def remover_favorito(self):
         if not self.usuario_logado:
