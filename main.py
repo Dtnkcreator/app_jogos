@@ -302,75 +302,10 @@ class App:
                     self.listbox_favoritos.insert(tk.END, fav)
 
     def abrir_janela_login(self):
-        if self.usuario_logado:
-            messagebox.showinfo("Já Logado", "O Login já foi realizado.")
-            return
-
-        if self.login_window is None or not self.login_window.winfo_exists():
-            self.login_window = tk.Toplevel(self.root)
-            self.login_window.title("Login")
-            self.login_window.geometry("320x200")
-            self.login_window.resizable(False, False)
-
-            self.frame_login = tk.Label(self.login_window, image=self.images[15])
-            self.frame_login.pack(fill="both", expand=True)
-
-            login_titulo = tk.Label(self.frame_login, text="Login", font=("Arial Black", 12), background="#cdcfb7")
-            login_titulo.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 20), sticky="n")
-
-            login_titulo.bind("<Enter>", lambda e: entrada_do_mouse(e, login_titulo))
-            login_titulo.bind("<Leave>", lambda e: saida_do_mouse(e, login_titulo))
-
-            label_nome = tk.Label(self.frame_login, text="Nome de Usuário:", font=("Arial Black", 8), background="#cdcfb7")
-            label_nome.grid(row=1, column=0, padx=10, pady=10, sticky="e")
-
-            label_nome.bind("<Enter>", lambda e: entrada_do_mouse(e, label_nome))
-            label_nome.bind("<Leave>", lambda e: saida_do_mouse(e, label_nome))
-
-            entry_nome = tk.Entry(self.frame_login)
-            entry_nome.grid(row=1, column=1, padx=10, pady=10, sticky="w")
-
-            label_senha = tk.Label(self.frame_login, text="Senha:", font=("Arial Black", 8), background="#cdcfb7")
-            label_senha.grid(row=2, column=0, padx=10, pady=10, sticky="e")
-
-            label_senha.bind("<Enter>", lambda e: entrada_do_mouse(e, label_senha))
-            label_senha.bind("<Leave>", lambda e: saida_do_mouse(e, label_senha))
-
-            self.entry_senha = tk.Entry(self.frame_login, show="•")
-            self.entry_senha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
-
-            self.botao_mostra_senha = tk.Button(self.frame_login, image=self.images[16], command=self.esconde_senha)
-            self.botao_mostra_senha.grid(row=2, column=2, padx=5, pady=10, sticky="w")
-
-
+       
 
             def login():
-                usuario = entry_nome.get()
-                senha = self.entry_senha.get()
-                data_de_nascimento = self.usuario_model.obter_data_nascimento(usuario)
-                if self.usuario_model.validar_usuario(usuario, senha):
-                    self.usuario_logado = usuario
-                    if self.login_window:
-                        self.login_window.destroy()
-                        self.login_window = None
-                    messagebox.showinfo("Login", f"Bem-vindo, {usuario}!")
-                    self.menu_usuario.delete(0, tk.END)
-                    self.menu_usuario.add_command(label=f"Usuário: {usuario}", state=tk.DISABLED)
-                    self.menu_usuario.add_command(label=f"Data de Nascimento: {data_de_nascimento}", state=tk.DISABLED)
-                    self.menu_usuario.add_command(label="Sair", command=self.sair_usuario)
-                elif usuario == '' or senha == '':
-                    messagebox.showwarning("Aviso", "Preencha todos os campos!")
-                else:
-                    messagebox.showerror("Login", "Usuário ou senha incorretos.")
-
-            login_button = criar_button(self.frame_login,"Entrar",3,0,login)
-
-            cadastro_button = criar_button(self.frame_login,"Cadastrar",3,1,self.abrir_janela_cadastro)
-        
-            self.login_window.protocol("WM_DELETE_WINDOW", self.login_window.destroy)
-
-        else:
-            self.login_window.lift()
+                
 
     def abrir_janela_cadastro(self):
         # Fechar a janela de login se estiver aberta
