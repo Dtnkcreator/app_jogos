@@ -1,7 +1,7 @@
 import tkinter as tk
 from elementos_tkinter import Buttoncustomizado, Labelcustomizada, LabelcustomizadaTitulo, Mensagens, Textcustomizado
-from sistema_login import Registro, BaseCadastro, Login
-from modelo import SalvarUsuario, CarregarUsuario
+from view.sistema_login import Registro, BaseCadastro, Login
+from model.modelo import SalvarUsuario, CarregarUsuario
 from datetime import datetime
 
 class Controle:
