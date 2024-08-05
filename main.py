@@ -4,6 +4,7 @@ from datetime import datetime
 from imagens.imagens import load_images
 from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio
 from model.model import UsuarioModel
+from controle.controle import Controle
 class App:
     def __init__(self, root):
         self.root = root
@@ -14,7 +15,7 @@ class App:
         self.setup()
         self.create_widgets()
         self.create_menu()
-    
+        self.controle = Controle(self.root)
         self.login_window = None
         self.favorito_window = None
         self.info_window = None
@@ -22,6 +23,9 @@ class App:
         self.usuario_logado = None
 
         self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
+    
+   
+       
     
     def setup(self):
         self.root.bind("<F11>", self.tela_cheia)
@@ -42,6 +46,7 @@ class App:
         menu_conta = tk.Menu(self.menubar, tearoff=0)
         menu_conta.add_command(label="Favoritos", command=self.abrir_janela_favoritos)
         menu_conta.add_command(label="Login", command=self.abrir_janela_login)
+        menu_conta.add_command(label="Cadastro", command=self.abrir_janela_cadastro)
         self.menubar.add_cascade(label="Conta", menu=menu_conta)
         self.menu_usuario = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Usuário", menu=self.menu_usuario)
@@ -302,156 +307,12 @@ class App:
                     self.listbox_favoritos.insert(tk.END, fav)
 
     def abrir_janela_login(self):
-        if self.usuario_logado:
-            messagebox.showinfo("Já Logado", "O Login já foi realizado.")
-            return
-
-        if self.login_window is None or not self.login_window.winfo_exists():
-            self.login_window = tk.Toplevel(self.root)
-            self.login_window.title("Login")
-            self.login_window.geometry("320x200")
-            self.login_window.resizable(False, False)
-
-            self.frame_login = tk.Label(self.login_window, image=self.images[15])
-            self.frame_login.pack(fill="both", expand=True)
-
-            login_titulo = tk.Label(self.frame_login, text="Login", font=("Arial Black", 12), background="#cdcfb7")
-            login_titulo.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 20), sticky="n")
-
-            login_titulo.bind("<Enter>", lambda e: entrada_do_mouse(e, login_titulo))
-            login_titulo.bind("<Leave>", lambda e: saida_do_mouse(e, login_titulo))
-
-            label_nome = tk.Label(self.frame_login, text="Nome de Usuário:", font=("Arial Black", 8), background="#cdcfb7")
-            label_nome.grid(row=1, column=0, padx=10, pady=10, sticky="e")
-
-            label_nome.bind("<Enter>", lambda e: entrada_do_mouse(e, label_nome))
-            label_nome.bind("<Leave>", lambda e: saida_do_mouse(e, label_nome))
-
-            self.entry_nome = tk.Entry(self.frame_login)
-            self.entry_nome.grid(row=1, column=1, padx=10, pady=10, sticky="w")
-
-            label_senha = tk.Label(self.frame_login, text="Senha:", font=("Arial Black", 8), background="#cdcfb7")
-            label_senha.grid(row=3, column=0, padx=10, pady=10, sticky="e")
-
-            label_senha.bind("<Enter>", lambda e: entrada_do_mouse(e, label_senha))
-            label_senha.bind("<Leave>", lambda e: saida_do_mouse(e, label_senha))
-
-            self.entry_senha = tk.Entry(self.frame_login, show="•")
-            self.entry_senha.grid(row=3, column=1, padx=10, pady=10, sticky="w")
-
-            self.botao_mostra_senha = tk.Button(self.frame_login, image=self.images[16], command=self.esconde_senha)
-            self.botao_mostra_senha.grid(row=3, column=2, padx=5, pady=10, sticky="w")
-
-
-            def login():
-                usuario = self.entry_nome.get()
-                senha = self.entry_senha.get()
-                data_de_nascimento = self.usuario_model.obter_data_nascimento(usuario)
+        return self.controle.abrir_janela_login()
                 
-                if self.usuario_model.validar_usuario(usuario, senha):
-                    self.usuario_logado = usuario
-                    if self.login_window:
-                        self.login_window.destroy()
-                        self.login_window = None
-                    messagebox.showinfo("Login", f"Bem-vindo, {usuario}!")
-                    self.menu_usuario.delete(0, tk.END)
-                    self.menu_usuario.add_command(label=f"Usuário: {usuario}", state=tk.DISABLED)
-                    self.menu_usuario.add_command(label=f"Data de Nascimento: {data_de_nascimento}", state=tk.DISABLED)
-                    self.menu_usuario.add_command(label="Sair", command=self.sair_usuario)
-                elif usuario == '' or senha == '':
-                    messagebox.showwarning("Aviso", "Preencha todos os campos!")
-                else:
-                    messagebox.showerror("Login", "Usuário ou senha incorretos.")
-                
-            login_button = criar_button(self.frame_login, "Entrar", 4, 0, login)
-            cadastro_button = criar_button(self.frame_login, "Cadastrar", 4, 1, self.abrir_janela_cadastro)
-
-            self.login_window.protocol("WM_DELETE_WINDOW", self.login_window.destroy)
-
-        else:
-            self.login_window.lift()
-    
-    def atualizar_feedback_nome(self, event):
-        nome = self.entrada_usuario_cadastro.get()
-        senha = self.entrada_senha_cadastro.get()
-
-        if event.widget == self.entrada_usuario_cadastro:
-            if len(nome) == 0:
-                if not self.nome_feedback_exibido:
-                    messagebox.showinfo("Aviso", "O nome de usuário deve ter pelo menos 1 caractere.")
-                    self.nome_feedback_exibido = True
-            else:
-                self.nome_feedback_exibido = False
-
-        elif event.widget == self.entrada_senha_cadastro:
-            if len(senha) <= 3:
-                if not self.senha_feedback_exibido:
-                    messagebox.showinfo("Aviso", "A senha deve ter mais de 3 caracteres.")
-                    self.senha_feedback_exibido = True
-            else:
-                self.senha_feedback_exibido = False 
 
     def abrir_janela_cadastro(self):
-        if self.login_window:
-            self.login_window.destroy()
-            self.login_window = None
-
-        if not self.cadastro_window or not tk.Toplevel.winfo_exists(self.cadastro_window):
-            self.cadastro_window = tk.Toplevel(self.root)
-            self.cadastro_window.title("Cadastro")
-            self.cadastro_window.geometry("300x250")
-            self.cadastro_window.resizable(False, False)
-            self.cadastro_window.attributes("-topmost", True)
-
-            frame_cadastro = tk.Label(self.cadastro_window, image=self.images[15])
-            frame_cadastro.pack(fill='both', expand=True)
-
-            for i in range(6):
-                frame_cadastro.grid_rowconfigure(i, weight=0)
-
-            for i in range(2):
-                frame_cadastro.grid_columnconfigure(i, weight=1)
-
-            cadastro_titulo = cria_label_titulo(frame_cadastro, "Cadastro", 0, 0, 2)
-
-            label_novo_nome = cria_label(frame_cadastro, "Novo usuário:", 1, 0, 10, 5, "w")
-
-            self.entrada_usuario_cadastro = tk.Entry(frame_cadastro, width=20)
-            self.entrada_usuario_cadastro.grid(row=1, column=1, padx=5, pady=5, sticky="e")
-            self.entrada_usuario_cadastro.bind("<KeyRelease>", self.atualizar_feedback_nome)
-
-            label_nova_senha = cria_label(frame_cadastro, "Nova senha:", 3, 0, 10, 5, "w")
-            self.entrada_senha_cadastro = tk.Entry(frame_cadastro, width=20)
-            self.entrada_senha_cadastro.grid(row=3, column=1, padx=5, pady=5, sticky="e")
-            self.entrada_senha_cadastro.bind("<KeyRelease>", self.atualizar_feedback_nome)
-
-            label_aniversario = cria_label(frame_cadastro, "Sua data de nascimento:", 4, 0, 10, 5, "w")
-            self.entrada_aniversario = tk.Entry(frame_cadastro, width=20)
-            self.entrada_aniversario.grid(row=4, column=1, padx=5, pady=5, sticky="e")
-
-            button_cadastro = criar_button(frame_cadastro, "Cadastrar", 5, 0, self.cadastrar_usuario)
-
-        else:
-            self.cadastro_window.lift()
-
-        self.cadastro_window.protocol("WM_DELETE_WINDOW", self.cadastro_window.destroy)
-
-
-
-    def cadastrar_usuario(self):
-        usuario = self.entrada_usuario_cadastro.get()
-        senha = self.entrada_senha_cadastro.get()
-        data_de_nascimento = self.entrada_aniversario.get()
-
-        if not usuario or not senha or not data_de_nascimento:
-            messagebox.showwarning("Erro", "Os campos não foram preenchidos corretamente.")
-            return
-
-        if self.usuario_model.criar_usuario(usuario, senha,data_de_nascimento):
-            messagebox.showinfo("Cadastro", "Cadastro realizado com sucesso!")
-            self.cadastro_window.destroy
-        else:
-            messagebox.showerror("Erro", "Não foi possível realizar o cadastro. Usuário pode já existir.")
+        return self.controle.abrir_janela_registro()
+        
 
     def remover_favorito(self):
         if not self.usuario_logado:
