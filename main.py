@@ -4,7 +4,7 @@ from datetime import datetime
 from imagens.imagens import load_images
 from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio
 from model.model import UsuarioModel
-from ccontrole.ontrole import controle
+from controle.controle import Controle
 class App:
     def __init__(self, root):
         self.root = root
