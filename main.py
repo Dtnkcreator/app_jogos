@@ -4,6 +4,7 @@ from datetime import datetime
 from imagens.imagens import load_images
 from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio
 from model.model import UsuarioModel
+from ccontrole.ontrole import controle
 class App:
     def __init__(self, root):
         self.root = root
@@ -302,52 +303,11 @@ class App:
                     self.listbox_favoritos.insert(tk.END, fav)
 
     def abrir_janela_login(self):
-       
-
-            def login():
+             
                 
 
     def abrir_janela_cadastro(self):
-        # Fechar a janela de login se estiver aberta
-        if self.login_window:
-            self.login_window.destroy()
-            self.login_window = None  # Opcional: limpar a referência à janela de login
-
-        # Verificar se a janela de cadastro já está aberta
-        if not self.cadastro_window or not tk.Toplevel.winfo_exists(self.cadastro_window):
-            self.cadastro_window = tk.Toplevel(self.root)
-            self.cadastro_window.title("Cadastro")
-            self.cadastro_window.geometry("300x200")  # Ajustado para acomodar o novo layout
-            self.cadastro_window.resizable(False, False)
-
-            frame_cadastro = tk.Label(self.cadastro_window, image=self.images[15])  # Alterado de Label para Frame para melhor controle
-            frame_cadastro.pack(fill='both', expand=True)
-
-            for i in range(5):  # Ajustado para suportar uma linha extra
-                frame_cadastro.grid_rowconfigure(i, weight=0)
-
-            for i in range(2):
-                frame_cadastro.grid_columnconfigure(i, weight=1)
-
-            cadastro_titulo = cria_label_titulo(frame_cadastro, "Cadastro", 0, 0, 2)
-
-            label_novo_nome = cria_label(frame_cadastro, "Novo usuário:", 1, 0, 10, 5, "w")
-
-            self.entrada_usuario_cadastro = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
-            self.entrada_usuario_cadastro.grid(row=1, column=1, padx=5, pady=5, sticky="e")
-
-            label_nova_senha = cria_label(frame_cadastro, "Nova senha:", 2, 0, 10, 5, "w")
-            self.entrada_senha_cadastro = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
-            self.entrada_senha_cadastro.grid(row=2, column=1, padx=5, pady=5, sticky="e")
-
-            label_aniversario = cria_label(frame_cadastro, "Sua data de nascimento:", 3, 0, 10, 5, "w")
-            self.entrada_aniversario = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
-            self.entrada_aniversario.grid(row=3, column=1, padx=5, pady=5, sticky="e")
-
-            button_cadastro = criar_button(frame_cadastro, "Cadastrar", 4, 0, self.cadastrar_usuario)
-
-        else:
-            self.cadastro_window.lift()
+        
 
         self.cadastro_window.protocol("WM_DELETE_WINDOW", self.cadastro_window.destroy)
 
