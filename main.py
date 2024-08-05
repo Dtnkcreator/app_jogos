@@ -15,7 +15,7 @@ class App:
         self.setup()
         self.create_widgets()
         self.create_menu()
-    
+        self.controle = Controle(self.root)
         self.login_window = None
         self.favorito_window = None
         self.info_window = None
@@ -23,6 +23,9 @@ class App:
         self.usuario_logado = None
 
         self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
+    
+   
+       
     
     def setup(self):
         self.root.bind("<F11>", self.tela_cheia)
@@ -303,13 +306,11 @@ class App:
                     self.listbox_favoritos.insert(tk.END, fav)
 
     def abrir_janela_login(self):
-             
+            self.controle.abrir_janela_login()
                 
 
     def abrir_janela_cadastro(self):
-        
-
-        self.cadastro_window.protocol("WM_DELETE_WINDOW", self.cadastro_window.destroy)
+        self.controle.abrir_janela_registro()
 
 
 
