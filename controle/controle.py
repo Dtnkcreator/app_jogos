@@ -8,7 +8,6 @@ class Controle:
     def __init__(self, root):
         self.root= root
         self.contar_click = 0
-        self.abrir_janela_registro()
        
   
     #só iremos chamar se o usuario se registrar pelo login
