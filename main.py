@@ -5,7 +5,6 @@ from imagens.imagens import load_images
 from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio
 from model.model import UsuarioModel
 from controle.controle import Controle
-from view.sistema_login import BaseCadastro, Registro, Login
 class App:
     def __init__(self, root):
         self.root = root
@@ -46,8 +45,8 @@ class App:
         self.menubar.add_cascade(label="Configurações", menu=self.menu_configuracoes)
         menu_conta = tk.Menu(self.menubar, tearoff=0)
         menu_conta.add_command(label="Favoritos", command=self.abrir_janela_favoritos)
-        menu_conta.add_command(label="Login", command=self.controle.abrir_janela_login)
-        menu_conta.add_command(label="Cadastro", command=self.controle.abrir_janela_registro)
+        menu_conta.add_command(label="Login", command=self.abrir_janela_login)
+        menu_conta.add_command(label="Cadastro", command=self.abrir_janela_cadastro)
         self.menubar.add_cascade(label="Conta", menu=menu_conta)
         self.menu_usuario = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Usuário", menu=self.menu_usuario)
@@ -307,6 +306,12 @@ class App:
                 for fav in favoritos:
                     self.listbox_favoritos.insert(tk.END, fav)
 
+    def abrir_janela_login(self):
+        return self.controle.abrir_janela_login()
+                
+
+    def abrir_janela_cadastro(self):
+        return self.controle.abrir_janela_registro()
         
 
     def remover_favorito(self):

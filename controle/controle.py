@@ -21,10 +21,10 @@ class Controle:
     
 
     def abrir_janela_login(self):
-        self.window_reg.withdraw()
+        self.root.withdraw()
         self.window_log = tk.Toplevel(self.root)
         self.login = Login(self.window_log)
-            
+        
         def check_user_janela_login():
             #usuario insere o nome e a senha
             self.nome_procurado = self.login.nome_get()
