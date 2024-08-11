@@ -2,9 +2,13 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from datetime import datetime
 from imagens.imagens import load_images
-from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio
+from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio, toca_som
 from model.model import UsuarioModel
 from controle.controle import Controle
+import pygame
+
+pygame.mixer.init()
+click_som = pygame.mixer.Sound(r"botarocaminhodoaudio\click.wav")
 class App:
     def __init__(self, root):
         self.root = root
@@ -240,7 +244,7 @@ class App:
         button_download15 = self.cria_button_download(self.frame_fps, 2, 4, 5, 5)
 
     def criar_button_favoritos(self,parent_frame, jogo, row, column):
-        button = tk.Button(parent_frame, text="Favoritar",font=("Arial",9), background="#cdcfb7", command=lambda: self.adicionar_favorito(jogo))
+        button = tk.Button(parent_frame, text="Favoritar",font=("Arial",9), background="#cdcfb7", command=lambda: [toca_som(), self.adicionar_favorito(jogo)])
         button.grid(row=row, column=column, padx=5, pady=5)
         button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
         button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
@@ -333,7 +337,7 @@ class App:
 
     def cria_button_download(self, parent_frame, row, column, padx, pady):
 
-            button = tk.Button(parent_frame, text="Baixar", background="#cdcfb7",font=("Arial", 9), command=lambda: self.iniciar_download(button))
+            button = tk.Button(parent_frame, text="Baixar", background="#cdcfb7",font=("Arial", 9), command=lambda: [toca_som(), self.iniciar_download(button)])
             button.grid(row=row, column=column, padx=padx, pady=pady)
             button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
             button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
