@@ -1,7 +1,17 @@
 import tkinter as tk
+import pygame
+
+# Inicialize o pygame e o mixer
+pygame.mixer.init()
+
+# Carregue o som
+click_som = pygame.mixer.Sound(r"adicionarocaminhodoaudio\click.wav")
+
+def toca_som():
+    click_som.play()
 
 def criar_button(parent_frame,text, row, column,command):
-        button = tk.Button(parent_frame, text=text,background='#cdcfb7', command=command)
+        button = tk.Button(parent_frame, text=text,background='#cdcfb7', command=lambda: [toca_som(), command()])
         button.grid(row=row, column=column, columnspan=2, padx=10, pady=(10, 20), sticky="n")
         button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
         button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
