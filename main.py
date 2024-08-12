@@ -8,7 +8,7 @@ from controle.controle import Controle
 import pygame
 
 pygame.mixer.init()
-click_som = pygame.mixer.Sound(r"botarocaminhodoaudio\click.wav")
+click_som = pygame.mixer.Sound(r"C:\Users\182400280\Downloads\Python\database\SQLite\jogos\definitivo\app_jogos\click.wav")
 class App:
     def __init__(self, root):
         self.root = root
