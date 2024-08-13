@@ -59,19 +59,23 @@ class BaseCadastro:
 class Registro(BaseCadastro):
     def __init__(self, root):
         super().__init__(root)
-        self.root.title('Registro de usuário')
+        self.root.title('REGISTRO')
+        self.root.resizable(False,False)
+        self.root.geometry("330x250")
         self.window = None
         self.button_enviar = Buttoncustomizado(self.frame_caixa, text='Cadastro', bg='#cdcfb7', fg='black')
         self.button_enviar.grid(row=12, column=0, pady=5, padx=5, columnspan=2)
         self.button_voltar = Buttoncustomizado(self.frame_caixa, text='Tela Principal', bg='#cdcfb7', fg='black')
         self.button_voltar.grid(row=13, column=0, pady=5, padx=5, columnspan=2)
-        self.nome_dicas = Labelcustomizada(self.frame_caixa, text='', font="Arial, 8")
+        self.nome_dicas = Labelcustomizada(self.frame_caixa, text='Aviso:', font="Arial, 9")
         self.nome_dicas.grid(row=14, column=0, pady=5, padx=5, columnspan=3,rowspan=3)
         
 class Login(BaseCadastro):
     def __init__(self, root):
         super().__init__(root)
-        self.root.title('Login de usuário')
+        self.root.title('LOGIN')
+        self.root.resizable(False,False)
+        self.root.geometry("285x200")
 
         self.mostrar_senha = tk.Button(self.frame_caixa, image=self.images[16])
         self.mostrar_senha.grid(row=4, column=2, sticky=tk.NSEW, pady=5, padx=5)

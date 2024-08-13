@@ -73,6 +73,13 @@ class UsuarioModel:
         result = cursor.fetchone()
         cursor.close()
         return result[0] if result else None
+    
+    def usuario_existe(self, nome):
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT 1 FROM usuario WHERE nome = %s', (nome,))
+        existe = cursor.fetchone() is not None
+        cursor.close()
+        return existe
 
 
     def adicionar_favorito(self, usuario_nome, jogo_nome):

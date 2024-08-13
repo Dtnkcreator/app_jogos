@@ -150,6 +150,13 @@ class UsuarioModel:
         except mariadb.Error as e:
             print(f"Erro ao remover favorito: {e}")
             return False
+        
+    def usuario_existe(self, nome):
+        cursor = self.conn.cursor()
+        cursor.execute('SELECT 1 FROM usuario WHERE nome = %s', (nome,))
+        existe = cursor.fetchone() is not None
+        cursor.close()
+        return existe
 
     def fechar_conexao(self):
         self.conn.close()

@@ -24,7 +24,7 @@ class App:
         self.favorito_window = None
         self.info_window = None
         self.cadastro_window = None
-        self.usuario_logado = None
+        self.usuario_logado = self.controle.obter_usuario_logado()
 
         self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
     
@@ -47,11 +47,11 @@ class App:
         self.menu_configuracoes.add_command(label="Tamanho de Tela Normal <ESC>", command=self.desativ_tela_cheia)
         self.menu_configuracoes.add_command(label="Sair", command=self.fechar_app)
         self.menubar.add_cascade(label="Configurações", menu=self.menu_configuracoes)
-        menu_conta = tk.Menu(self.menubar, tearoff=0)
-        menu_conta.add_command(label="Favoritos", command=self.abrir_janela_favoritos)
-        menu_conta.add_command(label="Login", command=self.abrir_janela_login)
-        menu_conta.add_command(label="Cadastro", command=self.abrir_janela_cadastro)
-        self.menubar.add_cascade(label="Conta", menu=menu_conta)
+        self.menu_conta = tk.Menu(self.menubar, tearoff=0)
+        self.menu_conta.add_command(label="Favoritos", command=self.abrir_janela_favoritos)
+        self.menu_conta.add_command(label="Login", command=self.abrir_janela_login)
+        self.menu_conta.add_command(label="Cadastro", command=self.abrir_janela_cadastro)
+        self.menubar.add_cascade(label="Conta", menu=self.menu_conta)
         self.menu_usuario = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Usuário", menu=self.menu_usuario)
         self.menu_usuario.add_command(label="Usuário: Não Logado", state=tk.DISABLED)
@@ -359,24 +359,8 @@ class App:
     def mensagem_download_completo(self, button):
         messagebox.showinfo("Informação", "O download já foi feito.")
 
-    def login(self):
-        usuario = self.entrada_usuario.get()
-        senha = self.entrada_senha.get()
-
-        if self.usuario_model.validar_usuario(usuario, senha):
-            messagebox.showinfo("Login", "Login realizado com sucesso!")
-            self.usuario_logado = usuario
-            self.fechar_janela_login()
-        else:
-            messagebox.showerror("Erro", "Usuário ou senha inválidos.")
-
     def esta_logado(self):
         return self.usuario_logado is not None
-
-    def fechar_janela_login(self):
-        if self.login_window:
-            self.login_window.destroy
-            self.login_window = None
             
     def tela_cheia(self, event=None):
         self.root.geometry("720x850")
@@ -391,20 +375,7 @@ class App:
         self.canvas.configure(xscrollcommand=self.scroll_x.set, yscrollcommand=self.scroll_y.set)
         self.scroll_x.grid(row=1, column=0, sticky="ew")
         self.scroll_y.grid(row=0, column=1, sticky="ns")
-
-
-
         
-    def esconde_senha(self):
-        if self.entry_senha.cget('show') == '•':
-            self.entry_senha.config(show='')
-            self.botao_mostra_senha.config(image=self.images[17])
-        else:
-            self.entry_senha.config(show='•')
-            self.botao_mostra_senha.config(image=self.images[16], command=self.esconde_senha)
-
-
-
     def fechar_app(self):
         resposta = messagebox.askyesno("Confirmar Saída", "Quer realmente sair?")
         if resposta:
