@@ -9,7 +9,7 @@ import pygame
 pygame.mixer.init()
 
 # Carregue o som
-click_som = pygame.mixer.Sound(r"C:\Users\Nadeli\Desktop\Visual Code\novo\click.wav")
+click_som = pygame.mixer.Sound(r"C:caminho\click.wav")
 
 class App:
     def __init__(self, root):
