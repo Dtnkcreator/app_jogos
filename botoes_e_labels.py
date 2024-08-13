@@ -5,22 +5,17 @@ import pygame
 pygame.mixer.init()
 
 # Carregue o som
-click_som = pygame.mixer.Sound(r"C:\Users\182400280\Downloads\Python\database\SQLite\jogos\definitivo\app_jogos\click.wav")
+click_som = pygame.mixer.Sound(r"C:caminho\click.wav")
 
 def toca_som():
     click_som.play()
 
-def criar_button(parent_frame,text, row, column,command):
-        button = tk.Button(parent_frame, text=text,background='#cdcfb7', command=lambda: [toca_som(), command()])
-        button.grid(row=row, column=column, columnspan=2, padx=10, pady=(10, 20), sticky="n")
-        button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
-        button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
-
-def criar_button_differente(parent_frame,text, row, column):
-        button = tk.Button(parent_frame, text=text,background='#cdcfb7', command=lambda: toca_som())
-        button.grid(row=row, column=column, columnspan=2, padx=10, pady=(10, 20), sticky="n")
-        button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
-        button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
+def criar_button(parent_frame, text, row, column, command):
+    # Use lambda para chamar `toca_som` e depois `command`
+    button = tk.Button(parent_frame, text=text, background='#cdcfb7', command=lambda: [toca_som(), command()])
+    button.grid(row=row, column=column, columnspan=2, padx=10, pady=(10, 20), sticky="n")
+    button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
+    button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
 
 def cria_label_jogo(parent, text, image, row, column, padx, pady):
     label = tk.Button(parent, text=text, image=image, compound="top", font=("Arial", 8), background="#cdcfb7")
@@ -34,12 +29,12 @@ def cria_label_subtitulo(parent, text, row, column, padx, pady):
     label_subtitulo.bind("<Enter>", lambda e: entrada_do_mouse(e, label_subtitulo))
     label_subtitulo.bind("<Leave>", lambda e: saida_do_mouse(e, label_subtitulo))
 
-def cria_label(parent, text, row, column, padx, pady,sticky):
-    label_subtitulo = tk.Label(parent, text=text, compound="top", background="#cdcfb7", font=("Arial", 9))
-    label_subtitulo.grid(row=row, column=column, padx=padx, pady=pady, columnspan=1, sticky=sticky)
+def cria_label(parent, text, row, column, padx, pady, sticky):
+    label_subtitulo = tk.Label(parent, text=text, compound="top", background="#cdcfb7", font=("Arial Black", 8))
+    label_subtitulo.grid(row=row, column=column, padx=padx, pady=pady, columnspan=5, sticky=sticky)
     label_subtitulo.bind("<Enter>", lambda e: entrada_do_mouse(e, label_subtitulo))
     label_subtitulo.bind("<Leave>", lambda e: saida_do_mouse(e, label_subtitulo))
-    
+
 def cria_label_titulo(parent, text, row, column, columnspan):
     label_titulo = tk.Label(parent, text=text, font=("Arial Black", 16), background="#cdcfb7")
     label_titulo.grid(row=row, column=column, columnspan=columnspan, pady=(10, 5), sticky="n")
