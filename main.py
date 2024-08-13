@@ -4,11 +4,13 @@ from datetime import datetime
 from imagens.imagens import load_images
 from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio, toca_som
 from model.model import UsuarioModel
-from controle.controle import Controle
 import pygame
-from menu_user.menu import adicionar_opcao,atualizar_opcao,verificacao_login
+
 pygame.mixer.init()
-click_som = pygame.mixer.Sound(r"C:\Users\182400280\Downloads\Python\database\SQLite\jogos\definitivo\app_jogos\click.wav")
+
+# Carregue o som
+click_som = pygame.mixer.Sound(r"C:\Users\Nadeli\Desktop\Visual Code\novo\click.wav")
+
 class App:
     def __init__(self, root):
         self.root = root
@@ -16,19 +18,17 @@ class App:
         self.root.geometry("700x700")
         self.root.resizable(False, False)
         self.usuario_model = UsuarioModel()
-        self.controle = Controle(self.root)
-        self.usuario_logado = self.controle.obter_usuario_logado()
         self.setup()
         self.create_widgets()
         self.create_menu()
-
+    
+        self.login_window = None
         self.favorito_window = None
-        
+        self.info_window = None
+        self.cadastro_window = None
+        self.usuario_logado = None
 
         self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
-    
-   
-       
     
     def setup(self):
         self.root.bind("<F11>", self.tela_cheia)
@@ -46,18 +46,13 @@ class App:
         self.menu_configuracoes.add_command(label="Tamanho de Tela Normal <ESC>", command=self.desativ_tela_cheia)
         self.menu_configuracoes.add_command(label="Sair", command=self.fechar_app)
         self.menubar.add_cascade(label="Configurações", menu=self.menu_configuracoes)
-        self.menu_conta = tk.Menu(self.menubar, tearoff=0)
-        self.menu_conta.add_command(label="Favoritos", command=self.abrir_janela_favoritos)
-        self.menu_conta.add_command(label="Login", command=self.abrir_janela_login)
-        self.menu_conta.add_command(label="Cadastro", command=self.abrir_janela_cadastro)
-        self.menubar.add_cascade(label="Conta", menu=self.menu_conta)
+        menu_conta = tk.Menu(self.menubar, tearoff=0)
+        menu_conta.add_command(label="Favoritos", command=self.abrir_janela_favoritos)
+        menu_conta.add_command(label="Login", command=self.abrir_janela_login)
+        self.menubar.add_cascade(label="Conta", menu=menu_conta)
         self.menu_usuario = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Usuário", menu=self.menu_usuario)
-
-        if(verificacao_login(self.usuario_logado)):
-            atualizar_opcao(self.menu_usuario,self.usuario_logado)
-        else:
-            self.menu_usuario.add_command(label="Usuário: Não Logado", state=tk.DISABLED)
+        self.menu_usuario.add_command(label="Usuário: Não Logado", state=tk.DISABLED)
 
     def sair_usuario(self):
         # Função para sair do usuário
@@ -247,7 +242,7 @@ class App:
         button_download15 = self.cria_button_download(self.frame_fps, 2, 4, 5, 5)
 
     def criar_button_favoritos(self,parent_frame, jogo, row, column):
-        button = tk.Button(parent_frame, text="Favoritar",font=("Arial",9), background="#cdcfb7", command=lambda: [toca_som(), self.adicionar_favorito(jogo)])
+        button = tk.Button(parent_frame, text="Favoritar",font=("Arial",9), background="#cdcfb7", command=lambda:[toca_som(),self.adicionar_favorito(jogo)])
         button.grid(row=row, column=column, padx=5, pady=5)
         button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
         button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
@@ -263,9 +258,12 @@ class App:
         else:
             messagebox.showinfo("Favorito", "O jogo já está na lista de favoritos.")
     def abrir_janela_favoritos(self):
+        if hasattr(self, 'favorito_window') and self.info_window and self.info_window.winfo_exists():
+            self.info_window.destroy
         if not self.usuario_logado:
             messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
             return
+
 
         if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
             self.favorito_window.lift()
@@ -289,7 +287,7 @@ class App:
         self.listbox_favoritos = tk.Listbox(self.frame_lista_botao, background="#cdcfb7", selectmode=tk.SINGLE)
         self.listbox_favoritos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        self.botao_remover_favorito = tk.Button(self.frame_lista_botao, text="Remover Favorito", command=self.remover_favorito)
+        self.botao_remover_favorito = tk.Button(self.frame_lista_botao, text="Remover Favorito", command=lambda: [toca_som(),self.remover_favorito])
         self.botao_remover_favorito.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="n")
 
         self.frame_favorito.grid_rowconfigure(1, weight=1)
@@ -310,6 +308,137 @@ class App:
                 for fav in favoritos:
                     self.listbox_favoritos.insert(tk.END, fav)
 
+    def abrir_janela_login(self):
+        if self.usuario_logado:
+            messagebox.showinfo("Já Logado", "O Login já foi realizado.")
+            return
+
+        if self.login_window is None or not self.login_window.winfo_exists():
+            self.login_window = tk.Toplevel(self.root)
+            self.login_window.title("Login")
+            self.login_window.geometry("320x200")
+            self.login_window.resizable(False, False)
+
+            self.frame_login = tk.Label(self.login_window, image=self.images[15])
+            self.frame_login.pack(fill="both", expand=True)
+
+            login_titulo = tk.Label(self.frame_login, text="Login", font=("Arial Black", 12), background="#cdcfb7")
+            login_titulo.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 20), sticky="n")
+
+            login_titulo.bind("<Enter>", lambda e: entrada_do_mouse(e, login_titulo))
+            login_titulo.bind("<Leave>", lambda e: saida_do_mouse(e, login_titulo))
+
+            label_nome = tk.Label(self.frame_login, text="Nome de Usuário:", font=("Arial Black", 8), background="#cdcfb7")
+            label_nome.grid(row=1, column=0, padx=10, pady=10, sticky="e")
+
+            label_nome.bind("<Enter>", lambda e: entrada_do_mouse(e, label_nome))
+            label_nome.bind("<Leave>", lambda e: saida_do_mouse(e, label_nome))
+
+            entry_nome = tk.Entry(self.frame_login)
+            entry_nome.grid(row=1, column=1, padx=10, pady=10, sticky="w")
+
+            label_senha = tk.Label(self.frame_login, text="Senha:", font=("Arial Black", 8), background="#cdcfb7")
+            label_senha.grid(row=2, column=0, padx=10, pady=10, sticky="e")
+
+            label_senha.bind("<Enter>", lambda e: entrada_do_mouse(e, label_senha))
+            label_senha.bind("<Leave>", lambda e: saida_do_mouse(e, label_senha))
+
+            self.entry_senha = tk.Entry(self.frame_login, show="•")
+            self.entry_senha.grid(row=2, column=1, padx=10, pady=10, sticky="w")
+
+            self.botao_mostra_senha = tk.Button(self.frame_login, image=self.images[16], command= self.esconde_senha)
+            self.botao_mostra_senha.grid(row=2, column=2, padx=5, pady=10, sticky="w")
+
+
+
+            def login():
+                usuario = entry_nome.get()
+                senha = self.entry_senha.get()
+                data_de_nascimento = self.usuario_model.obter_data_nascimento(usuario)
+                if self.usuario_model.validar_usuario(usuario, senha):
+                    self.usuario_logado = usuario
+                    if self.login_window:
+                        self.login_window.destroy()
+                        self.login_window = None
+                    messagebox.showinfo("Login", f"Bem-vindo, {usuario}!")
+                    self.menu_usuario.delete(0, tk.END)
+                    self.menu_usuario.add_command(label=f"Usuário: {usuario}", state=tk.DISABLED)
+                    self.menu_usuario.add_command(label=f"Data de Nascimento: {data_de_nascimento}", state=tk.DISABLED)
+                    self.menu_usuario.add_command(label="Sair", command=self.sair_usuario)
+                elif usuario == '' or senha == '':
+                    messagebox.showwarning("Aviso", "Preencha todos os campos!")
+                else:
+                    messagebox.showerror("Login", "Usuário ou senha incorretos.")
+
+            login_button = criar_button(self.frame_login,"Entrar",3,0,login)
+
+            cadastro_button = criar_button(self.frame_login,"Cadastrar",3,1,self.abrir_janela_cadastro)
+        
+            self.login_window.protocol("WM_DELETE_WINDOW", self.login_window.destroy)
+
+        else:
+            self.login_window.lift()
+
+    def abrir_janela_cadastro(self):
+        # Fechar a janela de login se estiver aberta
+        if self.login_window:
+            self.login_window.destroy()
+            self.login_window = None  # Opcional: limpar a referência à janela de login
+
+        # Verificar se a janela de cadastro já está aberta
+        if not self.cadastro_window or not tk.Toplevel.winfo_exists(self.cadastro_window):
+            self.cadastro_window = tk.Toplevel(self.root)
+            self.cadastro_window.title("Cadastro")
+            self.cadastro_window.geometry("300x200")  # Ajustado para acomodar o novo layout
+            self.cadastro_window.resizable(False, False)
+
+            frame_cadastro = tk.Label(self.cadastro_window, image=self.images[15])  # Alterado de Label para Frame para melhor controle
+            frame_cadastro.pack(fill='both', expand=True)
+
+            for i in range(5):  # Ajustado para suportar uma linha extra
+                frame_cadastro.grid_rowconfigure(i, weight=0)
+
+            for i in range(2):
+                frame_cadastro.grid_columnconfigure(i, weight=1)
+
+            cadastro_titulo = cria_label_titulo(frame_cadastro, "Cadastro", 0, 0, 2)
+
+            label_novo_nome = cria_label(frame_cadastro, "Novo usuário:", 1, 0, 10, 5, "w")
+
+            self.entrada_usuario_cadastro = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
+            self.entrada_usuario_cadastro.grid(row=1, column=1, padx=5, pady=5, sticky="e")
+
+            label_nova_senha = cria_label(frame_cadastro, "Nova senha:", 2, 0, 10, 5, "w")
+            self.entrada_senha_cadastro = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
+            self.entrada_senha_cadastro.grid(row=2, column=1, padx=5, pady=5, sticky="e")
+
+            label_aniversario = cria_label(frame_cadastro, "Sua data de nascimento:", 3, 0, 10, 5, "w")
+            self.entrada_aniversario = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
+            self.entrada_aniversario.grid(row=3, column=1, padx=5, pady=5, sticky="e")
+
+            button_cadastro = criar_button(frame_cadastro, "Cadastrar", 4, 0, self.cadastrar_usuario)
+
+        else:
+            self.cadastro_window.lift()
+
+        self.cadastro_window.protocol("WM_DELETE_WINDOW", self.cadastro_window.destroy)
+
+
+
+    def cadastrar_usuario(self):
+        usuario = self.entrada_usuario_cadastro.get()
+        senha = self.entrada_senha_cadastro.get()
+        data_de_nascimento = self.entrada_aniversario.get()
+
+        if not usuario or not senha or not data_de_nascimento:
+            messagebox.showwarning("Erro", "Os campos não foram preenchidos corretamente.")
+            return
+
+        if self.usuario_model.criar_usuario(usuario, senha,data_de_nascimento):
+            messagebox.showinfo("Cadastro", "Cadastro realizado com sucesso!")
+            self.cadastro_window.destroy
+        else:
+            messagebox.showerror("Erro", "Não foi possível realizar o cadastro. Usuário pode já existir.")
 
     def remover_favorito(self):
         if not self.usuario_logado:
@@ -330,18 +459,11 @@ class App:
 
     def cria_button_download(self, parent_frame, row, column, padx, pady):
 
-            button = tk.Button(parent_frame, text="Baixar", background="#cdcfb7",font=("Arial", 9), command=lambda: [toca_som(), self.iniciar_download(button)])
+            button = tk.Button(parent_frame, text="Baixar", background="#cdcfb7",font=("Arial", 9), command=lambda:[toca_som(), self.iniciar_download(button)])
             button.grid(row=row, column=column, padx=padx, pady=pady)
             button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
             button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
             return button
-
-    def abrir_janela_login(self):
-        return self.controle.abrir_janela_login()
-                
-
-    def abrir_janela_cadastro(self):
-        return self.controle.abrir_janela_registro()
 
     def iniciar_download(self, button):
         if self.usuario_logado:
@@ -359,8 +481,24 @@ class App:
     def mensagem_download_completo(self, button):
         messagebox.showinfo("Informação", "O download já foi feito.")
 
+    def login(self):
+        usuario = self.entrada_usuario.get()
+        senha = self.entrada_senha.get()
+
+        if self.usuario_model.validar_usuario(usuario, senha):
+            messagebox.showinfo("Login", "Login realizado com sucesso!")
+            self.usuario_logado = usuario
+            self.fechar_janela_login()
+        else:
+            messagebox.showerror("Erro", "Usuário ou senha inválidos.")
+
     def esta_logado(self):
         return self.usuario_logado is not None
+
+    def fechar_janela_login(self):
+        if self.login_window:
+            self.login_window.destroy
+            self.login_window = None
             
     def tela_cheia(self, event=None):
         self.root.geometry("720x850")
@@ -375,7 +513,19 @@ class App:
         self.canvas.configure(xscrollcommand=self.scroll_x.set, yscrollcommand=self.scroll_y.set)
         self.scroll_x.grid(row=1, column=0, sticky="ew")
         self.scroll_y.grid(row=0, column=1, sticky="ns")
+
+
         
+    def esconde_senha(self):
+        if self.entry_senha.cget('show') == '•':
+            self.entry_senha.config(show='')
+            self.botao_mostra_senha.config(image=self.images[17])
+        else:
+            self.entry_senha.config(show='•')
+            self.botao_mostra_senha.config(image=self.images[16], command=self.esconde_senha)
+
+
+
     def fechar_app(self):
         resposta = messagebox.askyesno("Confirmar Saída", "Quer realmente sair?")
         if resposta:
@@ -423,7 +573,6 @@ class TelaInicial:
         app = App(root)
         root.mainloop()
 
-    
 if __name__ == "__main__":
     root = tk.Tk()
     app = TelaInicial(root)
