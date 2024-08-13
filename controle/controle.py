@@ -4,7 +4,7 @@ from view.sistema_login import Registro, BaseCadastro, Login
 from model.modelo import UsuarioModel
 from datetime import datetime
 from imagens.imagens import load_images
-
+from model.user import User
 class Controle:
     def __init__(self, root):
         self.root = root
@@ -12,23 +12,25 @@ class Controle:
         self.current_user = None  # Para armazenar o usuário atual após login
         self.usuario_model = UsuarioModel()  # Instancia o modelo de usuário
         self.images = load_images()
-        self.menu_conta = None  # Armazenar o menu de contas
 
     def obter_usuario_logado(self):
         return self.current_user
 
     
     def abrir_janela_registro(self):
-        self.root.withdraw()
-        try:
-            self.window_log.destroy()
-        except:
-            pass
-        self.window_reg = tk.Toplevel(self.root)
-        self.registro = Registro(self.window_reg)
-        self.config_button_enviar()
-        self.config_eventos()
-        self.registro.button_voltar.config(command=self.retornar_app_principal_reg)
+        if self.current_user is None:
+            self.root.withdraw()
+            try:
+                self.window_log.destroy()
+            except:
+                pass
+            self.window_reg = tk.Toplevel(self.root)
+            self.registro = Registro(self.window_reg)
+            self.config_button_enviar()
+            self.config_eventos()
+            self.registro.button_voltar.config(command=self.retornar_app_principal_reg)
+        else:
+            Mensagens.msgAtencao('Saia da conta logada para criar uma nova conta!')
 
     def abrir_janela_login(self):
         if self.current_user is None:  # Só abrir a janela de login se não estiver logado
@@ -40,12 +42,10 @@ class Controle:
                 nome_procurado = self.login.nome_get()
                 senha_procurada = self.login.senha_get()
                 if self.usuario_model.validar_usuario(nome_procurado, senha_procurada):
-                    self.current_user = nome_procurado  # Armazena o nome do usuário logado
-                    Mensagens.msgInfo(f'Login bem-sucedido! \nBem-vindo {self.current_user}!')
+                    usuario = User(nome_procurado)
+                    self.current_user =usuario   # Armazena o nome do usuário logado
+                    Mensagens.msgInfo(f'Login bem-sucedido! \nBem-vindo {self.current_user.nome}!')
                     self.abrir_janela_principal()
-                    if self.menu_conta:
-                        self.menu_conta.entryconfig("Login", state=tk.DISABLED)
-                        self.menu_conta.entryconfig("Cadastro", state=tk.DISABLED)
                     self.window_log.destroy()
                 else:
                     Mensagens.msgAtencao('Nome de usuário ou senha incorretos!')
@@ -55,6 +55,9 @@ class Controle:
             self.login.button_voltar2.config(command=self.retornar_app_principal_log)
             self.login.mostrar_senha.config(command=self.ocultar_senha)
             self.ocultar_senha_visible = False
+        else:
+            Mensagens.msgAtencao('Você já está logado!')
+
 
     def abrir_janela_principal(self):
         if hasattr(self, 'window_log'):

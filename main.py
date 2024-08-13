@@ -6,7 +6,7 @@ from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, c
 from model.model import UsuarioModel
 from controle.controle import Controle
 import pygame
-
+from menu_user.menu import adicionar_opcao,atualizar_opcao,verificacao_login
 pygame.mixer.init()
 click_som = pygame.mixer.Sound(r"C:\Users\182400280\Downloads\Python\database\SQLite\jogos\definitivo\app_jogos\click.wav")
 class App:
@@ -16,15 +16,14 @@ class App:
         self.root.geometry("700x700")
         self.root.resizable(False, False)
         self.usuario_model = UsuarioModel()
+        self.controle = Controle(self.root)
+        self.usuario_logado = self.controle.obter_usuario_logado()
         self.setup()
         self.create_widgets()
         self.create_menu()
-        self.controle = Controle(self.root)
-        self.login_window = None
+
         self.favorito_window = None
-        self.info_window = None
-        self.cadastro_window = None
-        self.usuario_logado = self.controle.obter_usuario_logado()
+        
 
         self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
     
@@ -54,7 +53,11 @@ class App:
         self.menubar.add_cascade(label="Conta", menu=self.menu_conta)
         self.menu_usuario = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Usuário", menu=self.menu_usuario)
-        self.menu_usuario.add_command(label="Usuário: Não Logado", state=tk.DISABLED)
+
+        if(verificacao_login(self.usuario_logado)):
+            atualizar_opcao(self.menu_usuario,self.usuario_logado)
+        else:
+            self.menu_usuario.add_command(label="Usuário: Não Logado", state=tk.DISABLED)
 
     def sair_usuario(self):
         # Função para sair do usuário
@@ -260,12 +263,9 @@ class App:
         else:
             messagebox.showinfo("Favorito", "O jogo já está na lista de favoritos.")
     def abrir_janela_favoritos(self):
-        if hasattr(self, 'favorito_window') and self.info_window and self.info_window.winfo_exists():
-            self.info_window.destroy
         if not self.usuario_logado:
             messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
             return
-
 
         if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
             self.favorito_window.lift()
@@ -310,13 +310,6 @@ class App:
                 for fav in favoritos:
                     self.listbox_favoritos.insert(tk.END, fav)
 
-    def abrir_janela_login(self):
-        return self.controle.abrir_janela_login()
-                
-
-    def abrir_janela_cadastro(self):
-        return self.controle.abrir_janela_registro()
-        
 
     def remover_favorito(self):
         if not self.usuario_logado:
@@ -342,6 +335,13 @@ class App:
             button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
             button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
             return button
+
+    def abrir_janela_login(self):
+        return self.controle.abrir_janela_login()
+                
+
+    def abrir_janela_cadastro(self):
+        return self.controle.abrir_janela_registro()
 
     def iniciar_download(self, button):
         if self.usuario_logado:
@@ -423,6 +423,7 @@ class TelaInicial:
         app = App(root)
         root.mainloop()
 
+    
 if __name__ == "__main__":
     root = tk.Tk()
     app = TelaInicial(root)
