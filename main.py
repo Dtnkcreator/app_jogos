@@ -9,8 +9,8 @@ import pygame
 pygame.mixer.init()
 
 # Carregue o som
-click_som = pygame.mixer.Sound(r"C:caminho\click.wav")
-
+click_som = pygame.mixer.Sound(r"C:\caminho\click.wav")
+mensagem_som = pygame.mixer.Sound(r"C:\caminho\mensagem.wav")
 class App:
     def __init__(self, root):
         self.root = root
@@ -57,9 +57,11 @@ class App:
     def sair_usuario(self):
         # Função para sair do usuário
         if self.usuario_logado:
+            mensagem_som.play()
             resposta = messagebox.askyesno("Confirmação", "Deseja realmente sair?")
             if resposta:
                 self.usuario_logado = None
+                mensagem_som.play()
                 messagebox.showinfo("Sair", "Você foi desconectado com sucesso.")
                 self.menu_usuario.delete(0, tk.END)
                 self.menu_usuario.add_command(label="Usuário: Não Logado", state=tk.DISABLED)
@@ -249,18 +251,22 @@ class App:
     
     def adicionar_favorito(self, jogo):
         if not self.usuario_logado:
+            mensagem_som.play()
             messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
             return
         
         if self.usuario_model.adicionar_favorito(self.usuario_logado, jogo):
+            mensagem_som.play()
             messagebox.showinfo("Favorito", f"{jogo} adicionado aos favoritos.")
             self.atualizar_favoritos()
         else:
+            mensagem_som.play()
             messagebox.showinfo("Favorito", "O jogo já está na lista de favoritos.")
     def abrir_janela_favoritos(self):
         if hasattr(self, 'favorito_window') and self.info_window and self.info_window.winfo_exists():
             self.info_window.destroy
         if not self.usuario_logado:
+            mensagem_som.play()
             messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
             return
 
@@ -287,7 +293,7 @@ class App:
         self.listbox_favoritos = tk.Listbox(self.frame_lista_botao, background="#cdcfb7", selectmode=tk.SINGLE)
         self.listbox_favoritos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
 
-        self.botao_remover_favorito = tk.Button(self.frame_lista_botao, text="Remover Favorito", command=lambda: [toca_som(),self.remover_favorito])
+        self.botao_remover_favorito = tk.Button(self.frame_lista_botao, text="Remover Favorito", command=self.remover_favorito)
         self.botao_remover_favorito.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="n")
 
         self.frame_favorito.grid_rowconfigure(1, weight=1)
@@ -310,6 +316,7 @@ class App:
 
     def abrir_janela_login(self):
         if self.usuario_logado:
+            mensagem_som.play()
             messagebox.showinfo("Já Logado", "O Login já foi realizado.")
             return
 
@@ -360,14 +367,17 @@ class App:
                     if self.login_window:
                         self.login_window.destroy()
                         self.login_window = None
+                    mensagem_som.play()
                     messagebox.showinfo("Login", f"Bem-vindo, {usuario}!")
                     self.menu_usuario.delete(0, tk.END)
                     self.menu_usuario.add_command(label=f"Usuário: {usuario}", state=tk.DISABLED)
                     self.menu_usuario.add_command(label=f"Data de Nascimento: {data_de_nascimento}", state=tk.DISABLED)
                     self.menu_usuario.add_command(label="Sair", command=self.sair_usuario)
                 elif usuario == '' or senha == '':
+                    mensagem_som.play()
                     messagebox.showwarning("Aviso", "Preencha todos os campos!")
                 else:
+                    mensagem_som.play()
                     messagebox.showerror("Login", "Usuário ou senha incorretos.")
 
             login_button = criar_button(self.frame_login,"Entrar",3,0,login)
@@ -431,30 +441,37 @@ class App:
         data_de_nascimento = self.entrada_aniversario.get()
 
         if not usuario or not senha or not data_de_nascimento:
+            mensagem_som.play()
             messagebox.showwarning("Erro", "Os campos não foram preenchidos corretamente.")
             return
 
         if self.usuario_model.criar_usuario(usuario, senha,data_de_nascimento):
+            mensagem_som.play()
             messagebox.showinfo("Cadastro", "Cadastro realizado com sucesso!")
             self.cadastro_window.destroy
         else:
+            mensagem_som.play()
             messagebox.showerror("Erro", "Não foi possível realizar o cadastro. Usuário pode já existir.")
 
     def remover_favorito(self):
         if not self.usuario_logado:
+            mensagem_som.play()
             messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
             return
 
         selecionado = self.listbox_favoritos.curselection()
         if not selecionado:
+            mensagem_som.play()
             messagebox.showwarning("Erro", "Você não tem nenhum jogo para remover.")
             return
 
         jogo = self.listbox_favoritos.get(selecionado)
         if self.usuario_model.remover_favorito(self.usuario_logado, jogo):
+            mensagem_som.play()
             messagebox.showinfo("Remover Favorito", f"{jogo} removido dos favoritos.")
             self.atualizar_favoritos()
         else:
+            mensagem_som.play()
             messagebox.showerror("Erro", "Erro ao remover o jogo dos favoritos.")
 
     def cria_button_download(self, parent_frame, row, column, padx, pady):
@@ -471,14 +488,17 @@ class App:
 
             button.after(3000, lambda: self.download_concluido(button))
         else:
+            mensagem_som.play()
             messagebox.showwarning("Erro", "Você precisa fazer o Login primeiro.")
 
     def download_concluido(self, button):
+        mensagem_som.play()
         messagebox.showinfo("Informação", "O download foi concluído.")
         button.config(text="Download Completo", state="normal")
         button.config(command=lambda: self.mensagem_download_completo(button))
 
     def mensagem_download_completo(self, button):
+        mensagem_som.play()
         messagebox.showinfo("Informação", "O download já foi feito.")
 
     def login(self):
@@ -486,10 +506,12 @@ class App:
         senha = self.entrada_senha.get()
 
         if self.usuario_model.validar_usuario(usuario, senha):
+            mensagem_som.play()
             messagebox.showinfo("Login", "Login realizado com sucesso!")
             self.usuario_logado = usuario
             self.fechar_janela_login()
         else:
+            mensagem_som.play()
             messagebox.showerror("Erro", "Usuário ou senha inválidos.")
 
     def esta_logado(self):
@@ -527,6 +549,7 @@ class App:
 
 
     def fechar_app(self):
+        mensagem_som.play()
         resposta = messagebox.askyesno("Confirmar Saída", "Quer realmente sair?")
         if resposta:
             self.usuario_model.fechar_conexao()
