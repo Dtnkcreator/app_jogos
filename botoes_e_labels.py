@@ -1,11 +1,13 @@
 import tkinter as tk
 import pygame
+from tkinter import messagebox
+from imagens.imagens import load_images
 
 # Inicialize o pygame e o mixer
 pygame.mixer.init()
 
 # Carregue o som
-click_som = pygame.mixer.Sound(r"C:caminho\click.wav")
+click_som = pygame.mixer.Sound(r"C:\Users\182400280\Downloads\Python\database\SQLite\jogos\antigo\app_jogos\click.wav")
 
 def toca_som():
     click_som.play()
@@ -17,8 +19,44 @@ def criar_button(parent_frame, text, row, column, command):
     button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
     button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
 
-def cria_label_jogo(parent, text, image, row, column, padx, pady):
-    label = tk.Button(parent, text=text, image=image, compound="top", font=("Arial", 8), background="#cdcfb7")
+info_jogo_window = None
+
+def mostra_informacoes_jogo(jogo):
+    global info_jogo_window
+    
+    # Se uma janela de informações já estiver aberta, feche-a
+    if info_jogo_window is not None and info_jogo_window.winfo_exists():
+        info_jogo_window.destroy()
+    
+    # Cria uma nova janela
+    info_jogo_window = tk.Toplevel()
+    info_jogo_window.title("Informações do Jogo")
+    
+    # Configura o layout da nova janela
+    info_jogo_window.geometry("470x300")
+    info_jogo_window.resizable(False,False)
+    info_jogo_window.configure(bg="#f0f0f0")
+    info_label_principal = tk.Label(info_jogo_window, background="#607848")
+    info_label_principal.pack(expand="yes", fill="both")
+    info_label = tk.Label(info_label_principal, text=f"{jogo}", font=("Arial Black", 16), background="#cdcfb7")
+    info_label.grid(row=0, column=0, columnspan=2,  pady=(20, 10), padx=20, sticky="n")
+    info_label.bind("<Enter>", lambda e: entrada_do_mouse(e, info_label))
+    info_label.bind("<Leave>", lambda e: saida_do_mouse(e, info_label))
+
+    detalhes_jogo = f"Detalhes do jogo {jogo}.\nEste é um jogo incrível com várias características fantásticas!"
+    detalhes_label = tk.Label(info_label_principal, text=detalhes_jogo, font=("Arial", 12), bg="#789048", wraplength=550, justify="center")
+    detalhes_label.grid(row=1, column=0, columnspan=2, pady=(0, 20), padx=20, sticky="n")
+
+    # Adiciona um botão para fechar a janela, centralizado
+    close_button = tk.Button(info_label_principal, text="Fechar", font=("Arial", 15), command=info_jogo_window.destroy, bg="#cdcfb7")
+    close_button.grid(row=2, column=0, columnspan=2, pady=(10, 20), padx=20, sticky="n")
+
+    close_button.bind("<Enter>", lambda e: entrada_do_mouse(e, close_button))
+    close_button.bind("<Leave>", lambda e: saida_do_mouse(e, close_button))
+
+def cria_label_jogo(parent, text, image, row, column, padx, pady, jogo):
+    # Cria um botão ao invés de um label para permitir a interação
+    label = tk.Button(parent, text=text, image=image, compound="top", font=("Arial", 8), background="#cdcfb7", command=lambda: mostra_informacoes_jogo(jogo))
     label.grid(row=row, column=column, padx=padx, pady=pady)
     label.bind("<Enter>", lambda e: entrada_do_mouse(e, label))
     label.bind("<Leave>", lambda e: saida_do_mouse(e, label))

@@ -9,8 +9,8 @@ import pygame
 pygame.mixer.init()
 
 # Carregue o som
-click_som = pygame.mixer.Sound(r"C:\caminho\click.wav")
-mensagem_som = pygame.mixer.Sound(r"C:\caminho\mensagem.wav")
+click_som = pygame.mixer.Sound(r"C:\Users\182400280\Downloads\Python\database\SQLite\jogos\antigo\app_jogos\click.wav")
+mensagem_som = pygame.mixer.Sound(r"C:\Users\182400280\Downloads\Python\database\SQLite\jogos\antigo\app_jogos\mensagem.wav")
 class App:
     def __init__(self, root):
         self.root = root
@@ -156,27 +156,27 @@ class App:
         self.frame_destaques.grid(row=1, column=0, columnspan=5, padx=5, pady=5, sticky="nsew")
 
         # Super Mario Bros.
-        label1 = cria_label_jogo(self.frame_destaques, "Super Mario World", self.images[0], 0, 0, 5, 5)
+        label1 = cria_label_jogo(self.frame_destaques, "Super Mario World", self.images[0], 0, 0, 5, 5,"Super Mario World")
         self.criar_button_favoritos(self.frame_destaques, "Super Mario World", 1, 0)
         button_download1 = self.cria_button_download(self.frame_destaques, 2, 0, 5, 5)
 
         # Kingdom Rush
-        label2 = cria_label_jogo(self.frame_destaques, "Kingdom Rush", self.images[1], 0, 1, 5, 5)
+        label2 = cria_label_jogo(self.frame_destaques, "Kingdom Rush", self.images[1], 0, 1, 5, 5,"Kingdom Rush")
         self.criar_button_favoritos(self.frame_destaques, "Kingdom Rush", 1, 1)
         button_download2 = self.cria_button_download(self.frame_destaques, 2, 1, 5, 5)
 
         # CS:GO
-        label3 = cria_label_jogo(self.frame_destaques, "CS:GO", self.images[2], 0, 2, 5, 5)
+        label3 = cria_label_jogo(self.frame_destaques, "CS:GO", self.images[2], 0, 2, 5, 5,"CS:GO")
         self.criar_button_favoritos(self.frame_destaques, "CS:GO", 1, 2)
         button_download3 = self.cria_button_download(self.frame_destaques, 2, 2, 5, 5)
 
         # Bloons TD 6
-        label4 = cria_label_jogo(self.frame_destaques, "Bloons TD 6", self.images[3], 0, 3, 5, 5)
+        label4 = cria_label_jogo(self.frame_destaques, "Bloons TD 6", self.images[3], 0, 3, 5, 5,"Bloons TD 6")
         self.criar_button_favoritos(self.frame_destaques, "Bloons TD 6", 1, 3)
         button_download4 = self.cria_button_download(self.frame_destaques, 2, 3, 5, 5)
 
         # Metal Slug 3
-        label10 = cria_label_jogo(self.frame_destaques, "Metal Slug 3", self.images[9], 0, 4, 5, 5)
+        label10 = cria_label_jogo(self.frame_destaques, "Metal Slug 3", self.images[9], 0, 4, 5, 5,"Metal Slug 3")
         self.criar_button_favoritos(self.frame_destaques, "Metal Slug 3", 1, 4)
         button_download10 = self.cria_button_download(self.frame_destaques, 2, 4, 5, 5)
 
@@ -187,27 +187,27 @@ class App:
         self.frame_retro.grid(row=3, column=0, columnspan=5, padx=5, pady=5, sticky="nsew")
 
         # Pacman
-        label5 = cria_label_jogo(self.frame_retro, "Pacman", self.images[4], 0, 0, 5, 5)
+        label5 = cria_label_jogo(self.frame_retro, "Pacman", self.images[4], 0, 0, 5, 5,"Pacman")
         self.criar_button_favoritos(self.frame_retro, "Pacman", 1, 0)
         button_download5 = self.cria_button_download(self.frame_retro, 2, 0, 5, 5)
 
         # Donkey Kong
-        label6 = cria_label_jogo(self.frame_retro, "Donkey Kong Country", self.images[5], 0, 1, 5, 5)
+        label6 = cria_label_jogo(self.frame_retro, "Donkey Kong Country", self.images[5], 0, 1, 5, 5,"Donkey Kong Country")
         self.criar_button_favoritos(self.frame_retro, "Donkey Kong Country", 1, 1)
         button_download6 = self.cria_button_download(self.frame_retro, 2, 1, 5, 5)
 
         # Tetris
-        label7 = cria_label_jogo(self.frame_retro, "Tetris", self.images[6], 0, 2, 5, 5)
+        label7 = cria_label_jogo(self.frame_retro, "Tetris", self.images[6], 0, 2, 5, 5,"Tetris")
         self.criar_button_favoritos(self.frame_retro, "Tetris", 1, 2)
         button_download7 = self.cria_button_download(self.frame_retro, 2, 2, 5, 5)
 
         # Contra
-        label8 = cria_label_jogo(self.frame_retro, "Contra", self.images[7], 0, 3, 5, 5)
+        label8 = cria_label_jogo(self.frame_retro, "Contra", self.images[7], 0, 3, 5, 5,"Contra")
         self.criar_button_favoritos(self.frame_retro, "Contra", 1, 3)
         button_download8 = self.cria_button_download(self.frame_retro, 2, 3, 5, 5)
 
         # Sonic
-        label9 = cria_label_jogo(self.frame_retro, "Sonic", self.images[8], 0, 4, 5, 5)
+        label9 = cria_label_jogo(self.frame_retro, "Sonic", self.images[8], 0, 4, 5, 5,"Sonic")
         self.criar_button_favoritos(self.frame_retro, "Sonic", 1, 4)
         button_download9 = self.cria_button_download(self.frame_retro, 2, 4, 5, 5)
 
@@ -219,27 +219,27 @@ class App:
 
 
         # ARK
-        label11 = cria_label_jogo(self.frame_fps, "ARK: Survival Ascended", self.images[10], 0, 0, 5, 5)
+        label11 = cria_label_jogo(self.frame_fps, "ARK: Survival Ascended", self.images[10], 0, 0, 5, 5,"ARK: Survival Ascended")
         self.criar_button_favoritos(self.frame_fps,"ARK: Survival Ascended", 1, 0)
         button_download11 = self.cria_button_download(self.frame_fps, 2, 0, 5, 5)
 
         # Apex Legends
-        label12 = cria_label_jogo(self.frame_fps, "Apex Legends", self.images[11], 0, 1, 5, 5)
+        label12 = cria_label_jogo(self.frame_fps, "Apex Legends", self.images[11], 0, 1, 5, 5,"Apex Legends")
         self.criar_button_favoritos(self.frame_fps,"Apex Legends", 1, 1)
         button_download12 = self.cria_button_download(self.frame_fps, 2, 1, 5, 5)
 
         # DayZ
-        label13 = cria_label_jogo(self.frame_fps, "DayZ", self.images[12], 0, 2, 5, 5)
+        label13 = cria_label_jogo(self.frame_fps, "DayZ", self.images[12], 0, 2, 5, 5,"DayZ")
         self.criar_button_favoritos(self.frame_fps,"DayZ", 1, 2)
         button_download13 = self.cria_button_download(self.frame_fps, 2, 2, 5, 5)
 
         # Team Fortress 2
-        label14 = cria_label_jogo(self.frame_fps, "Team Fortress 2", self.images[13], 0, 3, 5, 5)
+        label14 = cria_label_jogo(self.frame_fps, "Team Fortress 2", self.images[13], 0, 3, 5, 5,"Team Fortress 2")
         self.criar_button_favoritos(self.frame_fps,"Team Fortress 2", 1, 3)
         button_download14 = self.cria_button_download(self.frame_fps, 2, 3, 5, 5)
 
         # PUBG
-        label15 = cria_label_jogo(self.frame_fps, "PUBG", self.images[14], 0, 4, 5, 5)
+        label15 = cria_label_jogo(self.frame_fps, "PUBG", self.images[14], 0, 4, 5, 5,"PUBG")
         self.criar_button_favoritos(self.frame_fps,"PUBG", 1, 4)
         button_download15 = self.cria_button_download(self.frame_fps, 2, 4, 5, 5)
 
