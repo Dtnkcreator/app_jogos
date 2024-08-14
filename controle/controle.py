@@ -1,14 +1,15 @@
 import tkinter as tk
+from tkinter import messagebox
 from view.elementos_tkinter import Buttoncustomizado, Labelcustomizada, LabelcustomizadaTitulo, Mensagens, Textcustomizado
 from view.sistema_login import Registro, BaseCadastro, Login
 from model.modelo import UsuarioModel
 from datetime import datetime
 from imagens.imagens import load_images
 from model.user import User
+
 class Controle:
     def __init__(self, root):
         self.root = root
-        self.contar_click = 0
         self.current_user = None  # Para armazenar o usuário atual após login
         self.usuario_model = UsuarioModel()  # Instancia o modelo de usuário
         self.images = load_images()
@@ -16,13 +17,12 @@ class Controle:
     def obter_usuario_logado(self):
         return self.current_user
 
-    
     def abrir_janela_registro(self):
         if self.current_user is None:
             self.root.withdraw()
             try:
                 self.window_log.destroy()
-            except:
+            except AttributeError:
                 pass
             self.window_reg = tk.Toplevel(self.root)
             self.registro = Registro(self.window_reg)
@@ -42,9 +42,8 @@ class Controle:
                 nome_procurado = self.login.nome_get()
                 senha_procurada = self.login.senha_get()
                 if self.usuario_model.validar_usuario(nome_procurado, senha_procurada):
-                    usuario = User(nome_procurado)
-                    self.current_user =usuario   # Armazena o nome do usuário logado
-                    Mensagens.msgInfo(f'Login bem-sucedido! \nBem-vindo {self.current_user.nome}!')
+                    self.current_user = nome_procurado  # Armazena a instância do usuário logado
+                    Mensagens.msgInfo(f'Login bem-sucedido! \nBem-vindo {self.current_user}!')
                     self.abrir_janela_principal()
                     self.window_log.destroy()
                 else:
@@ -58,21 +57,10 @@ class Controle:
         else:
             Mensagens.msgAtencao('Você já está logado!')
 
-
     def abrir_janela_principal(self):
         if hasattr(self, 'window_log'):
             self.window_log.destroy()
-        self.root.deiconify()
-
-    def exibir_favoritos(self):
-        if self.current_user:
-            favoritos = self.usuario_model.obter_favoritos(self.current_user)
-            label_favoritos = tk.Label(self.window_principal, text=f'Favoritos de {self.current_user}:')
-            label_favoritos.pack()
-            
-            for jogo in favoritos:
-                jogo_label = tk.Label(self.window_principal, text=jogo)
-                jogo_label.pack()
+        self.root.deiconify()  # Exibir favoritos ou outras informações relacionadas ao usuário
 
     def retornar_app(self):
         self.root.deiconify()
@@ -88,7 +76,7 @@ class Controle:
                     self.login.senha_entrada.config(show='')
                 else:
                     self.login.senha_entrada.config(show='•')
-        except:
+        except AttributeError:
             pass
 
     def dicas_nome(self, event):
@@ -101,7 +89,7 @@ class Controle:
         elif ler_nome >= 20:
             Mensagens.msgAtencao(f'Aviso: Seu nome de usuário chegou ao número máximo de caracteres, pois tem {ler_nome}!')
             self.registro.nome_entrada.delete(1.0, tk.END)
-            self.registro.nome_dicas.config(text='Aviso: Entrada resetada',fg='red')
+            self.registro.nome_dicas.config(text='Aviso: Entrada resetada', fg='red')
         else:
             self.registro.nome_dicas.config(text=f'Aviso: Seu nome de usuário não chegou ao número mínimo de caracteres, pois tem {ler_nome}!', fg='red', wraplength=200)
             if ler_nome <= 1:
@@ -112,7 +100,7 @@ class Controle:
 
         if 1 <= ler_senha <= 4:
             self.registro.nome_dicas.config(text=f'Aviso: Sua senha é fraca!', fg='red', wraplength=200)
-        elif 5<= ler_senha <=10:
+        elif 5 <= ler_senha <= 10:
             self.registro.nome_dicas.config(text=f'Aviso: Sua senha é moderada, pois tem {ler_senha}!', fg='green', wraplength=200)
         elif ler_senha >= 20:
             Mensagens.msgAtencao(f'Aviso: Sua senha chegou ao número máximo de caracteres, pois tem {ler_senha}!')
@@ -142,10 +130,6 @@ class Controle:
         data = self.registro.data_get()
 
         def verificar_campo_vazio():
-            nome = self.registro.nome_get()
-            senha = self.registro.senha_get()
-            data = self.registro.data_get()
-
             mensagens = []
             if nome == '':
                 mensagens.append('O campo nome está vazio, preencha por favor!')
@@ -200,11 +184,72 @@ class Controle:
     def retornar_app_principal_reg(self):
         self.window_reg.destroy()
         self.root.deiconify()
-    def obter_nome_usuario(self):
-        return self.usuario_logado
+
+    def abrir_janela_favoritos(self):
+        if not self.current_user:
+            messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
+            return
+
+        if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
+            self.favorito_window.lift()
+            self.favorito_window.focus()
+            return
+
+        self.favorito_window = tk.Toplevel(self.root)
+        self.favorito_window.title("Favoritos")
+        self.favorito_window.geometry("300x400")
+        self.favorito_window.resizable(False, False)
+
+        frame_favorito = tk.Label(self.favorito_window, image=self.images[15])
+        frame_favorito.pack(fill="both", expand=True)
+
+        favorito_label = tk.Label(frame_favorito, text="Meus Favoritos", font=("Arial", 12), background="#cdcfb7")
+        favorito_label.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="n")
+
+        frame_lista_botao = tk.Label(frame_favorito, image=self.images[15])
+        frame_lista_botao.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+
+        listbox_favoritos = tk.Listbox(frame_lista_botao, background="#cdcfb7", selectmode=tk.SINGLE)
+        listbox_favoritos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        botao_remover_favorito = tk.Button(frame_lista_botao, text="Remover Favorito", command=lambda: self.remover_favorito(listbox_favoritos))
+        botao_remover_favorito.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="n")
+
+        frame_favorito.grid_rowconfigure(1, weight=1)
+        frame_favorito.grid_columnconfigure(0, weight=1)
+        frame_lista_botao.grid_rowconfigure(0, weight=1)
+        frame_lista_botao.grid_columnconfigure(0, weight=1)
+
+        self.atualizar_favoritos(listbox_favoritos)
+
+        self.favorito_window.protocol("WM_DELETE_WINDOW", self.favorito_window.destroy)
+
+    def atualizar_favoritos(self, listbox_favoritos):
+        listbox_favoritos.delete(0, tk.END)
+        favoritos = self.usuario_model.obter_favoritos(self.current_user)
+        for fav in favoritos:
+            listbox_favoritos.insert(tk.END, fav)
+
+    def remover_favorito(self, listbox_favoritos):
+        if not self.current_user:
+            messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
+            return
+
+        selecionado = listbox_favoritos.curselection()
+        if not selecionado:
+            messagebox.showwarning("Erro", "Você não tem nenhum jogo para remover.")
+            return
+
+        jogo = listbox_favoritos.get(selecionado)
+        if self.usuario_model.remover_favorito(self.current_user, jogo):
+            messagebox.showinfo("Remover Favorito", f"{jogo} removido dos favoritos.")
+            self.atualizar_favoritos(listbox_favoritos)
+        else:
+            messagebox.showerror("Erro", "Erro ao remover o jogo dos favoritos.")
 
 if __name__ == '__main__':
     root = tk.Tk()
     controle = Controle(root)
     menu = tk.Menu(root)
+    root.config(menu=menu)
     root.mainloop()
