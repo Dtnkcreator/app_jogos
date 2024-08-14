@@ -2,13 +2,15 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from datetime import datetime
 from imagens.imagens import load_images
-from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio, toca_som
+from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,saida_do_mouse_inicio, entrada_do_mouse_inicio, toca_som
 from model.model import UsuarioModel
 from controle.controle import Controle
 import pygame
 from menu_user.menu import adicionar_opcao,atualizar_opcao,verificacao_login
 pygame.mixer.init()
-click_som = pygame.mixer.Sound(r"C:\Users\182400280\Downloads\Python\database\SQLite\jogos\definitivo\app_jogos\click.wav")
+click_som = pygame.mixer.Sound(r"C:\Users\Nadeli\Desktop\Visual Code\app jogos mateus\main\app_jogos\click.wav")
+
+logado = True
 class App:
     def __init__(self, root):
         self.root = root
@@ -17,23 +19,39 @@ class App:
         self.root.resizable(False, False)
         self.usuario_model = UsuarioModel()
         self.controle = Controle(self.root)
-        self.usuario_logado = self.controle.obter_usuario_logado()
+        self.usuario_logado = self.controle.current_user
         self.setup()
         self.create_widgets()
         self.create_menu()
 
         self.favorito_window = None
-        
+        sucesso_login = self.controle.abrir_janela_login()
+        if sucesso_login:
+            # Atualiza o usuário logado e o menu após um login bem-sucedido
+            self.usuario_logado = self.controle.current_user
+            self.atualizar_menu_usuario()
+            self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
 
-        self.root.protocol("WM_DELETE_WINDOW", self.fechar_app)
-    
-   
-       
-    
+    def atualizar_menu_usuario(self):
+    # Limpa o menu de usuário existente
+
+
+        if self.usuario_logado:
+            self.menu_usuario.delete(0, tk.END)
+            self.menubar.config(label=f"Usuário: {self.usuario_logado}", menu=self.menu_usuario)
+            self.menu_usuario.add_command(label="Sair", command=self.sair_usuario)
+        else:
+            self.menu_usuario.delete(0, tk.END)
+            self.menu_usuario.add_command(label="Usuário: Não Logado", state=tk.DISABLED)
+            
+
+
     def setup(self):
         self.root.bind("<F11>", self.tela_cheia)
         self.root.bind("<Escape>", self.desativ_tela_cheia)
         self.images = load_images()
+
+
 
     def create_menu(self):
         self.menubar = tk.Menu(self.root)
@@ -54,10 +72,8 @@ class App:
         self.menu_usuario = tk.Menu(self.menubar, tearoff=0)
         self.menubar.add_cascade(label="Usuário", menu=self.menu_usuario)
 
-        if(verificacao_login(self.usuario_logado)):
-            atualizar_opcao(self.menu_usuario,self.usuario_logado)
-        else:
-            self.menu_usuario.add_command(label="Usuário: Não Logado", state=tk.DISABLED)
+
+        
 
     def sair_usuario(self):
         # Função para sair do usuário
@@ -252,81 +268,24 @@ class App:
         button.bind("<Enter>", lambda e: entrada_do_mouse(e, button))
         button.bind("<Leave>", lambda e: saida_do_mouse(e, button))
     
+    def abrir_janela_favoritos(self):
+        self.controle.abrir_janela_favoritos()
+
     def adicionar_favorito(self, jogo):
         if not self.usuario_logado:
             messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
             return
-        
+
         if self.usuario_model.adicionar_favorito(self.usuario_logado, jogo):
             messagebox.showinfo("Favorito", f"{jogo} adicionado aos favoritos.")
             self.atualizar_favoritos()
         else:
             messagebox.showinfo("Favorito", "O jogo já está na lista de favoritos.")
-    def abrir_janela_favoritos(self):
-        if not self.usuario_logado:
-            messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
-            return
 
-        if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
-            self.favorito_window.lift()
-            self.favorito_window.focus()
-            return
-
-        self.favorito_window = tk.Toplevel(self.root)
-        self.favorito_window.title("Favoritos")
-        self.favorito_window.geometry("300x400")
-        self.favorito_window.resizable(False, False)
-
-        self.frame_favorito = tk.Label(self.favorito_window, image=self.images[15])
-        self.frame_favorito.pack(fill="both", expand=True)
-
-        favorito_label = tk.Label(self.frame_favorito, text="Meus Favoritos", font=("Arial", 12), background="#cdcfb7")
-        favorito_label.grid(row=0, column=0, padx=10, pady=(10, 5), sticky="n")
-
-        self.frame_lista_botao = tk.Label(self.frame_favorito, image=self.images[15])
-        self.frame_lista_botao.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
-
-        self.listbox_favoritos = tk.Listbox(self.frame_lista_botao, background="#cdcfb7", selectmode=tk.SINGLE)
-        self.listbox_favoritos.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-
-        self.botao_remover_favorito = tk.Button(self.frame_lista_botao, text="Remover Favorito", command=self.remover_favorito)
-        self.botao_remover_favorito.grid(row=1, column=0, padx=10, pady=(5, 10), sticky="n")
-
-        self.frame_favorito.grid_rowconfigure(1, weight=1)
-        self.frame_favorito.grid_columnconfigure(0, weight=1)
-        self.frame_lista_botao.grid_rowconfigure(0, weight=1)
-        self.frame_lista_botao.grid_columnconfigure(0, weight=1)
-
-        self.atualizar_favoritos()
-
-        self.favorito_window.protocol("WM_DELETE_WINDOW", self.favorito_window.destroy)
-
-    
     def atualizar_favoritos(self):
         if hasattr(self, 'favorito_window') and self.favorito_window and self.favorito_window.winfo_exists():
             if hasattr(self, 'listbox_favoritos') and self.listbox_favoritos.winfo_exists():
-                self.listbox_favoritos.delete(0, tk.END)
-                favoritos = self.usuario_model.obter_favoritos(self.usuario_logado)
-                for fav in favoritos:
-                    self.listbox_favoritos.insert(tk.END, fav)
-
-
-    def remover_favorito(self):
-        if not self.usuario_logado:
-            messagebox.showwarning("Erro", "Você precisa realizar o login primeiro.")
-            return
-
-        selecionado = self.listbox_favoritos.curselection()
-        if not selecionado:
-            messagebox.showwarning("Erro", "Você não tem nenhum jogo para remover.")
-            return
-
-        jogo = self.listbox_favoritos.get(selecionado)
-        if self.usuario_model.remover_favorito(self.usuario_logado, jogo):
-            messagebox.showinfo("Remover Favorito", f"{jogo} removido dos favoritos.")
-            self.atualizar_favoritos()
-        else:
-            messagebox.showerror("Erro", "Erro ao remover o jogo dos favoritos.")
+                self.controle.atualizar_favoritos(self.listbox_favoritos)
 
     def cria_button_download(self, parent_frame, row, column, padx, pady):
 
