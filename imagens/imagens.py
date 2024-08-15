@@ -58,4 +58,9 @@ def load_images():
     image19 = Image.open("imagens/wallpaper.jpg").resize((700, 700))
     photo19 = ImageTk.PhotoImage(image19)
 
+    image20 = Image.open("imagens/fundo_mario.jpg").resize((600, 330))
+    photo20 = ImageTk.PhotoImage(image20)
+
+    
+
     return photo1, photo2, photo3, photo4, photo5, photo6, photo7, photo8, photo9, photo10, photo11, photo12, photo13, photo14, photo15, photo16, photo17, photo18, photo19

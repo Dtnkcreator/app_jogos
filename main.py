@@ -5,6 +5,7 @@ from imagens.imagens import load_images
 from botoes_e_labels import entrada_do_mouse, saida_do_mouse, cria_label_jogo, cria_label_subtitulo, cria_label_titulo,criar_button,cria_label,saida_do_mouse_inicio, entrada_do_mouse_inicio, toca_som
 from model.model import UsuarioModel
 import pygame
+from tkcalendar import DateEntry
 
 pygame.mixer.init()
 
@@ -423,7 +424,7 @@ class App:
             self.entrada_senha_cadastro.grid(row=2, column=1, padx=5, pady=5, sticky="e")
 
             label_aniversario = cria_label(frame_cadastro, "Sua data de nascimento:", 3, 0, 10, 5, "w")
-            self.entrada_aniversario = tk.Entry(frame_cadastro, width=20)  # Ajusta a largura da entrada
+            self.entrada_aniversario = DateEntry(frame_cadastro, width=10, background='darkblue', foreground='white', borderwidth=2)
             self.entrada_aniversario.grid(row=3, column=1, padx=5, pady=5, sticky="e")
 
             button_cadastro = criar_button(frame_cadastro, "Cadastrar", 4, 0, self.cadastrar_usuario)
